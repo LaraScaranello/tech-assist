@@ -1,13 +1,15 @@
-// ignore_for_file: unnecessary_new, file_names, unused_local_variable, prefer_const_constructors, sized_box_for_whitespace, unused_label, non_constant_identifier_names, avoid_types_as_parameter_names
+// ignore_for_file: unnecessary_new, file_names, unused_local_variable, prefer_const_constructors, sized_box_for_whitespace, unused_label, non_constant_identifier_names, avoid_types_as_parameter_names, must_call_super, annotate_overrides, prefer_interpolation_to_compose_strings, avoid_print
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:tech_assist/Utils/appColors.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:tech_assist/model/users.dart';
 
 class RegisterUserPage extends StatefulWidget {
-  const RegisterUserPage({super.key});
+  //const RegisterUserPage({super.key});
 
   @override
   State<RegisterUserPage> createState() => _RegisterUserPageState();
@@ -40,7 +42,7 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
 
   // método que valida os campos
   void validaCampos() {
-    // recuperar os dados
+    // passo 1 - recuperar os dados
     String nomeEmpresa = nomeEmpresaController.text;
     String nome = nomeController.text;
     String telefone = telefoneController.text;
@@ -54,13 +56,25 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
         if (telefone.isNotEmpty) {
           if (email.isNotEmpty && email.contains("@")) {
             if (senha.isNotEmpty && senha.length > 6) {
-              if (termos == false) {
-                msgErro = "Aceite os termos e condições";
-              } else {
-                // cadastro no banco de dados
-                // 1: receber os dados da interface em um objeto model
+              if (confirmaSenha == senha) {
+                if (termos == false) {
+                  msgErro = "Aceite os termos e condições";
+                } else {
+                  // passo 2 - cadastro no banco de dados
+                  // 1: receber os dados da interface em um objeto model
+                  Users user = new Users();
 
-                // 2: executar o método cadastraUsuario(user)
+                  user.nomeEmpresa = nomeEmpresa;
+                  user.nome = nome;
+                  user.telefone = telefone;
+                  user.email = email;
+                  user.senha = senha;
+
+                  // 2: executar o método cadastraUsuario(user)
+                  cadastraUsuario(user);
+                }
+              } else {
+                msgErro = "As senhas não combinam";
               }
             } else {
               msgErro = "Preencha a senha com mais de 6 caracteres";
@@ -86,21 +100,24 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
     }
   }
 
-  // Método que cadastra no firebase o usuário
-  /*void cadastraUsuario(user) async {
-    // instanciar o firebase
+  // Método que cadastra o usuário no firebase
+  void cadastraUsuario(user) async {
+    // instanciar o firebase (autenticação)
     FirebaseAuth auth = FirebaseAuth.instance;
+
+    // criar o usuário com email e senha
     auth
         .createUserWithEmailAndPassword(email: user.email, password: user.senha)
         .then((firebaseUser) {
       final SnackBar snackBar = SnackBar(
-          content: Text("Cadastrado com sucesso!"),
+          content: Text("Usuário cadastrado com sucesso"),
           duration: Duration(seconds: 5));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Navigator.pushNamed(context, 'login-page');
     }).catchError((erro) {
       print("Aconteceu o erro: " + erro.toString());
     });
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {

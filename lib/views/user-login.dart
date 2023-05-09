@@ -1,18 +1,19 @@
-// ignore_for_file: prefer_const_constructors, file_names, sized_box_for_whitespace, avoid_print, sort_child_properties_last, unused_local_variable, must_call_super
+// ignore_for_file: prefer_const_constructors, file_names, sized_box_for_whitespace, avoid_print, sort_child_properties_last, unused_local_variable, must_call_super, prefer_interpolation_to_compose_strings
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tech_assist/Utils/appColors.dart';
 
 class UserLoginPage extends StatefulWidget {
-  const UserLoginPage({super.key});
+  //const UserLoginPage({super.key});
 
   @override
   State<UserLoginPage> createState() => _UserLoginPageState();
 }
 
-//exibir caixa de diálogo
+//exibir caixa de diálogo para recurar a senha
 var emailRecuperarSenhaController = TextEditingController();
 Future<void> exibirRedefinirSenha(BuildContext context) {
   return showDialog<void>(
@@ -121,22 +122,25 @@ class _UserLoginPageState extends State<UserLoginPage> {
     _passwordVisible = true;
   }
 
-  // controladores dos campos de texto de login e senha
+  // controladores dos campos de texto
   var emailController = TextEditingController();
   var senhaController = TextEditingController();
 
   // método para efetuar o login no firebase
-  /*void efetuaLogin() async {
+  void efetuaLogin() async {
+    // instanciar o firebase auth (autenticação)
     FirebaseAuth auth = FirebaseAuth.instance;
+
+    // método para realizar o login com email e senha
     auth
         .signInWithEmailAndPassword(
             email: emailController.text, password: senhaController.text)
         .then((firebaseUser) {
       final SnackBar snackBar = SnackBar(
-          content: Text("Login efetuado com sucesso!"),
+          content: Text("Login efetuado com sucesso"),
           duration: Duration(seconds: 5));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      Navigator.pushNamed(context, 'home');
+      Navigator.pushNamed(context, 'main-page');
     }).catchError((error) {
       print("Erro ao efetuar o login" + error.toString());
       final SnackBar snackBar = SnackBar(
@@ -144,7 +148,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
           duration: Duration(seconds: 5));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     });
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -282,7 +286,9 @@ class _UserLoginPageState extends State<UserLoginPage> {
                     "Login",
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    efetuaLogin();
+                  },
                 ),
               ),
 

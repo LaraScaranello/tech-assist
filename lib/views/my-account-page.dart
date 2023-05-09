@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MyAccountPage extends StatefulWidget {
-  const MyAccountPage({super.key});
+  //const MyAccountPage({super.key});
 
   @override
   State<MyAccountPage> createState() => _MyAccountPageState();

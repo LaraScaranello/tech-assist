@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "358520212252",
+    "project_id": "tech-assist-7268d",
+    "storage_bucket": "tech-assist-7268d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:358520212252:android:f6e5a39c6d5fcf7d6288d9",
+        "android_client_info": {
+          "package_name": "com.example.tech_assist"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "358520212252-p31u4sc3ah5a3ddksm6fgd1ha50rj2ql.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCfjopuajo93fPxierugEErFAq-pgudSEI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "358520212252-p31u4sc3ah5a3ddksm6fgd1ha50rj2ql.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

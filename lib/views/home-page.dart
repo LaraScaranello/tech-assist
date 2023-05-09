@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tech_assist/utils/appColors.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  //const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
                       height: 88,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(4)),
-                        color: AppColors.bottomBar,
+                        color: AppColors.secondColor,
                       ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -61,13 +61,13 @@ class _HomePageState extends State<HomePage> {
                                 width: 48,
                                 height: 40,
                                 decoration: BoxDecoration(
-                                    color: AppColors.backgroundContainer,
+                                    color: AppColors.containerColorWhite,
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(4))),
                                 child: Icon(
                                   Icons.description,
                                   size: 24,
-                                  color: AppColors.bottomBar,
+                                  color: AppColors.containerColorBlack,
                                 )),
                           ),
                           Column(
@@ -107,7 +107,7 @@ class _HomePageState extends State<HomePage> {
                       height: 88,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(4)),
-                        color: AppColors.containerColor,
+                        color: AppColors.containerColorBlack,
                       ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -118,13 +118,13 @@ class _HomePageState extends State<HomePage> {
                                 width: 48,
                                 height: 40,
                                 decoration: BoxDecoration(
-                                    color: AppColors.backgroundContainer,
+                                    color: AppColors.containerColorWhite,
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(4))),
                                 child: Icon(
                                   Icons.fact_check,
                                   size: 24,
-                                  color: AppColors.containerColor,
+                                  color: AppColors.containerColorBlack,
                                 )),
                           ),
                           Column(
@@ -166,7 +166,7 @@ class _HomePageState extends State<HomePage> {
                             borderRadius: BorderRadius.all(Radius.circular(4)),
                             color: Colors.white,
                             border: Border.all(
-                                width: 2, color: AppColors.bottomBar)),
+                                width: 2, color: AppColors.secondColor)),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
@@ -176,7 +176,7 @@ class _HomePageState extends State<HomePage> {
                                   width: 48,
                                   height: 40,
                                   decoration: BoxDecoration(
-                                      color: AppColors.bottomBar,
+                                      color: AppColors.secondColor,
                                       borderRadius:
                                           BorderRadius.all(Radius.circular(4))),
                                   child: Icon(
