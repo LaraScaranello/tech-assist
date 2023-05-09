@@ -7,7 +7,7 @@ import 'package:tech_assist/views/user-register.dart';
 
 // classe criada para definir as rotas do app
 class App extends StatelessWidget {
-  const App({super.key});
+  //const App({super.key});
 
   @override
   Widget build(BuildContext context) {

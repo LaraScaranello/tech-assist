@@ -2,10 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tech_assist/model/files.dart';
 import 'package:tech_assist/utils/appColors.dart';
 
 class FilesPage extends StatefulWidget {
-  const FilesPage({super.key});
+  //const FilesPage({super.key});
 
   @override
   State<FilesPage> createState() => _FilesPageState();
@@ -13,15 +14,18 @@ class FilesPage extends StatefulWidget {
 
 class _FilesPageState extends State<FilesPage> {
   var searchController = TextEditingController();
-  String client = 'Lara Scaranello';
-  String numFile = '120';
-  String dateOpened = '02/05/2023';
-  String device = 'iPhone 11';
-  String status = 'Em execução';
+
+  List<Files> fichaAtendimento = [
+    Files('Lara Scaranello', 1, DateTime.now(), 'Iphone 11', 'Orçamento'),
+    Files('Lucas Ribeiro', 2, DateTime.now(), 'Samsung A31', 'Em aberto'),
+    Files('Paulo Viana', 3, DateTime.now(), 'Iphone 8', 'Fechado'),
+    Files('Laura Silva', 4, DateTime.now(), 'Samsung S10', 'Em execução'),
+    Files('Leandro Casale', 1, DateTime.now(), 'Motorola G8', 'Cancelado'),
+  ];
 
   final dropValueStatus = ValueNotifier('');
   final dropOptionsStatus = [
-    'Aberto',
+    'Em aberto',
     'Orçamento',
     'Em execução',
     'Fechado',
@@ -111,10 +115,10 @@ class _FilesPageState extends State<FilesPage> {
                                   BorderRadius.all(Radius.circular(4)),
                               color: Colors.white,
                               border: Border.all(
-                                  width: 1, color: AppColors.bottomBar)),
+                                  width: 1, color: AppColors.secondColor)),
                           child: Center(
                               child: Icon(Icons.search,
-                                  color: AppColors.bottomBar)),
+                                  color: AppColors.secondColor)),
                         ),
                       )
                     ],
@@ -276,118 +280,136 @@ class _FilesPageState extends State<FilesPage> {
                                   BorderRadius.all(Radius.circular(4)),
                               color: Colors.white,
                               border: Border.all(
-                                  width: 1, color: AppColors.bottomBar)),
+                                  width: 1, color: AppColors.secondColor)),
                           child: Center(
                               child: Icon(Icons.filter_alt,
-                                  color: AppColors.bottomBar)),
+                                  color: AppColors.secondColor)),
                         ),
                       ),
                     ],
                   ),
                 ),
-                Container(
-                  padding: EdgeInsets.all(16),
-                  width: double.infinity,
-                  height: 105,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(4)),
-                      color: Colors.white,
-                      border: Border.all(width: 1, color: AppColors.bottomBar)),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            client,
-                            style: GoogleFonts.montserrat(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textColorBlack,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                          Text(
-                            "N° " + numFile,
-                            style: GoogleFonts.montserrat(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.textColorGrey2,
-                            ),
-                            textDirection: TextDirection.ltr,
-                            textAlign: TextAlign.left,
-                          ),
-                        ],
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 10, bottom: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Icon(
-                              Icons.watch_later_outlined,
-                              size: 12,
-                              color: AppColors.bottomBar,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 8),
-                              child: Text(
-                                dateOpened,
-                                style: GoogleFonts.montserrat(
-                                    fontSize: 12,
-                                    color: AppColors.textColorGrey2),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.build,
-                            size: 12,
-                            color: AppColors.bottomBar,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  device,
-                                  style: GoogleFonts.montserrat(
-                                      fontSize: 12,
-                                      color: AppColors.textColorGrey2),
-                                ),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.circle,
-                                      size: 8,
-                                      color: AppColors.green,
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 8),
-                                      child: Text(
-                                        status,
-                                        style: GoogleFonts.montserrat(
-                                            fontSize: 12,
-                                            color: AppColors.textColorGrey2),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 10),
+                    child: ListView.builder(
+                        itemCount: fichaAtendimento.length,
+                        itemBuilder: (context, index) =>
+                            buildOrder(fichaAtendimento[index])),
                   ),
                 ),
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  // método que cria a lista de ordens de serviço
+  Widget buildOrder(Files obj) {
+    return Container(
+      padding: EdgeInsets.all(16),
+      width: 304,
+      height: 105,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(4)),
+          color: Colors.white,
+          border: Border.all(width: 1, color: AppColors.secondColor)),
+      child: ListTile(
+        title: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  obj.cliente,
+                  style: GoogleFonts.montserrat(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textColorBlack,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+                Text(
+                  "N° " + obj.numFicha,
+                  style: GoogleFonts.montserrat(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textColorGrey2,
+                  ),
+                  textDirection: TextDirection.ltr,
+                  textAlign: TextAlign.left,
+                ),
+              ],
+            ),
+          ],
+        ),
+        subtitle: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: 10, bottom: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Icon(
+                    Icons.watch_later_outlined,
+                    size: 12,
+                    color: AppColors.secondColor,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 8),
+                    child: Text(
+                      obj.dataAbertura,
+                      style: GoogleFonts.montserrat(
+                          fontSize: 12, color: AppColors.textColorGrey2),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.build,
+                      size: 12,
+                      color: AppColors.secondColor,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 8),
+                      child: Text(
+                        obj.aparelho,
+                        style: GoogleFonts.montserrat(
+                            fontSize: 12, color: AppColors.textColorGrey2),
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Icon(
+                      Icons.circle,
+                      size: 8,
+                      color: AppColors.green,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 8),
+                      child: Text(
+                        obj.status,
+                        style: GoogleFonts.montserrat(
+                            fontSize: 12, color: AppColors.textColorGrey2),
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

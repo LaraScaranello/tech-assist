@@ -41,9 +41,16 @@ dependencies:
   flutter_native_splash: ^1.2.0
   flutter_launcher_icons: ^0.9.1
   mask_text_input_formatter: ^2.4.0
+  firebase_core: ^1.6.0            # Recursos basicos
+  cloud_firestore: ^2.5.1          # Para o banco de dados firestore
+  firebase_storage: ^10.0.3        # Armazenamento de arquivos
+  firebase_auth: ^3.1.0            # Para utilizar recursos de autenticacao
+  firebase_core_platform_interface: 4.5.1
+  firebase_messaging: ^13.0.4
+
 
 flutter_native_splash:
-  image: "assets/images/splashScreen.png"
+  # image: "assets/images/splashScreen.png"
   background_image: "assets/images/splashScreen.png"
   android: true
   web: true
