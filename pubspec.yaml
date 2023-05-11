@@ -38,8 +38,8 @@ dependencies:
   splashscreen: ^1.2.0
   google_fonts: ^2.3.1
   lottie: ^1.2.2
-  flutter_native_splash: ^1.2.0
-  flutter_launcher_icons: ^0.9.1
+  flutter_native_splash: ^2.2.19
+  flutter_launcher_icons: ^0.13.1
   mask_text_input_formatter: ^2.4.0
   firebase_core: ^1.6.0            # Recursos basicos
   cloud_firestore: ^2.5.1          # Para o banco de dados firestore
@@ -50,16 +50,17 @@ dependencies:
 
 
 flutter_native_splash:
-  # image: "assets/images/splashScreen.png"
   background_image: "assets/images/splashScreen.png"
   android: true
   web: true
+  android_12:
+    image: assets/images/logo1.png
+    color: "#111F70"
+    branding: assets/images/techAssist.png
 
-flutter_icons:
+flutter_launcher_icons:
   image_path: "assets/images/logo1.png"
   android: "launcher_icon"
-  adaptive_icon_background: "#FFFFFF"
-  adaptive_icon_foreground: "assets/images/logo1.png"
 
 dev_dependencies:
   flutter_test:

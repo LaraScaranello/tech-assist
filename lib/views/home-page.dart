@@ -67,7 +67,7 @@ class _HomePageState extends State<HomePage> {
                                 child: Icon(
                                   Icons.description,
                                   size: 24,
-                                  color: AppColors.containerColorBlack,
+                                  color: AppColors.secondColor,
                                 )),
                           ),
                           Column(
@@ -122,7 +122,7 @@ class _HomePageState extends State<HomePage> {
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(4))),
                                 child: Icon(
-                                  Icons.fact_check,
+                                  Icons.assignment_turned_in_rounded,
                                   size: 24,
                                   color: AppColors.containerColorBlack,
                                 )),
@@ -180,7 +180,7 @@ class _HomePageState extends State<HomePage> {
                                       borderRadius:
                                           BorderRadius.all(Radius.circular(4))),
                                   child: Icon(
-                                    Icons.person_search,
+                                    Icons.badge_rounded,
                                     size: 24,
                                     color: Colors.white,
                                   )),
