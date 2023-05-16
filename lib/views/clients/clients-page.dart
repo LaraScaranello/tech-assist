@@ -1,5 +1,6 @@
 // ignore_for_file: sized_box_for_whitespace, prefer_const_constructors, avoid_unnecessary_containers, prefer_interpolation_to_compose_strings, use_key_in_widget_constructors
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tech_assist/model/clients.dart';
@@ -13,12 +14,37 @@ class ClientsPage extends StatefulWidget {
 class _ClientsPageState extends State<ClientsPage> {
   var searchController = TextEditingController();
 
+  /*
   List<Clients> orcamentos = [
     Clients('Lara Scaranello', '(17)5555-5555', 'lara@gmail.com'),
-    Clients('Lucas Ribeiro', '(17)4444-5555', 'lucas@gmail.com'),
-    Clients('Paulo Viana', '(17)3333-5555', 'paulo@gmail.com'),
+    Clients('Paulo Viana', '(17)4444-5555', 'lucas@gmail.com'),
+    Clients('Lucas Ribeiro', '(17)3333-5555', 'paulo@gmail.com'),
     Clients('Laura Silva', '(17)2222-5555', 'laura@gmail.com'),
   ];
+  */
+  List<Clients> clientes = [];
+
+  void carregarLista() async {
+    FirebaseFirestore db = FirebaseFirestore.instance;
+
+    QuerySnapshot querySnapshot = await db.collection("clients").get();
+
+    for (DocumentSnapshot item in querySnapshot.docs) {
+      Map<String, dynamic> dados = item.data() as Map<String, dynamic>;
+      clientes = [
+        Clients(dados['cliente'].toString(), dados['email'].toString(),
+            dados['telefone'].toString()),
+      ];
+      print("Dados: " + clientes.toString());
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    carregarLista();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,9 +114,9 @@ class _ClientsPageState extends State<ClientsPage> {
               Expanded(
                 child: Container(
                   child: ListView.builder(
-                      itemCount: orcamentos.length,
+                      itemCount: clientes.length,
                       itemBuilder: (context, index) =>
-                          buildBudget(orcamentos[index])),
+                          buildBudget(clientes[index])),
                 ),
               ),
               Row(

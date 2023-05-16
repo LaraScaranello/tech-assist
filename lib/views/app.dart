@@ -30,7 +30,7 @@ class App extends StatelessWidget {
         '/create-client': (context) => CreateClient(),
         '/edit-client': (context) => EditClient(),
       },
-      initialRoute: '/user-login',
+      initialRoute: '/main-page',
     );
   }
 }

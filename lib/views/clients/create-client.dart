@@ -1,9 +1,11 @@
-// ignore_for_file: sized_box_for_whitespace, prefer_const_constructors, avoid_unnecessary_containers, prefer_interpolation_to_compose_strings, use_key_in_widget_constructors
+// ignore_for_file: sized_box_for_whitespace, prefer_const_constructors, avoid_unnecessary_containers, prefer_interpolation_to_compose_strings, use_key_in_widget_constructors, unused_local_variable, unnecessary_new
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:tech_assist/model/clients.dart';
 import 'package:tech_assist/utils/appColors.dart';
+import 'package:tech_assist/controller/client-controller.dart';
 
 class CreateClient extends StatefulWidget {
   //const OpenFile({super.key});
@@ -17,6 +19,29 @@ class _CreateClientState extends State<CreateClient> {
   var nomeController = TextEditingController();
   var emailController = TextEditingController();
   var telefoneController = TextEditingController();
+
+  void validarCampos() {
+    String msgErro = '';
+
+    if (nomeController.text.isEmpty) {
+      msgErro = 'Preencha o nome';
+    } else if (emailController.text.isEmpty) {
+      msgErro = 'Preencha o e-mail';
+    } else if (telefoneController.text.isEmpty) {
+      msgErro = 'Preencha o telefone';
+    }
+
+    if (msgErro.isEmpty) {
+      Clients client = new Clients(
+          nomeController.text, emailController.text, telefoneController.text);
+
+      newClient(context, client);
+    } else {
+      final SnackBar snackBar =
+          SnackBar(content: Text(msgErro), duration: Duration(seconds: 5));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
 
   // máscaras
   final maskTelefone = MaskTextInputFormatter(
@@ -181,7 +206,9 @@ class _CreateClientState extends State<CreateClient> {
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.w500),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        validarCampos();
+                      },
                     ),
                   ),
                 ),

@@ -7,19 +7,19 @@ class Clients {
   late String _email;
 
   // construtor
-  Clients(String cliente, String telefone, String email) {
+  Clients(String cliente, String email, String telefone) {
     this._cliente = cliente;
-    this._telefone = telefone;
     this._email = email;
+    this._telefone = telefone;
   }
 
   // getters e setters
   get cliente => this._cliente;
   set cliente(value) => this._cliente = value;
 
-  get telefone => this._telefone;
-  set telefone(value) => this._telefone = value;
-
   get email => this._email;
   set email(value) => this._email = value;
+
+  get telefone => this._telefone;
+  set telefone(value) => this._telefone = value;
 }

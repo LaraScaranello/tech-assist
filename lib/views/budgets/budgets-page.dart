@@ -15,8 +15,8 @@ class _BudgetsPageState extends State<BudgetsPage> {
 
   List<Budgets> orcamentos = [
     Budgets('Lara Scaranello', 1, DateTime.now(), 'Iphone 11', 'Orçamento'),
-    Budgets('Lucas Ribeiro', 2, DateTime.now(), 'Samsung A31', 'Em aberto'),
-    Budgets('Paulo Viana', 3, DateTime.now(), 'Iphone 8', 'Fechado'),
+    Budgets('Paulo Viana', 2, DateTime.now(), 'Samsung A31', 'Em aberto'),
+    Budgets('Lucas Ribeiro', 3, DateTime.now(), 'Iphone 8', 'Fechado'),
     Budgets('Laura Silva', 4, DateTime.now(), 'Samsung S10', 'Em execução'),
   ];
 
