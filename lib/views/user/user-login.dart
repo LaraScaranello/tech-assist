@@ -44,6 +44,9 @@ Future<void> exibirRedefinirSenha(BuildContext context) {
                   height: 40,
                   color: AppColors.primaryOpacityColor,
                   child: TextField(
+                    style: GoogleFonts.montserrat(
+                        textStyle: TextStyle(
+                            fontSize: 16, color: AppColors.textColorBlack)),
                     controller: emailRecuperarSenhaController,
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
@@ -138,14 +141,14 @@ class _UserLoginPageState extends State<UserLoginPage> {
         .then((firebaseUser) {
       final SnackBar snackBar = SnackBar(
           content: Text("Login efetuado com sucesso"),
-          duration: Duration(seconds: 5));
+          duration: Duration(seconds: 3));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      Navigator.pushNamed(context, 'main-page');
+      Navigator.of(context).pushNamed('/main-page');
     }).catchError((error) {
       print("Erro ao efetuar o login" + error.toString());
       final SnackBar snackBar = SnackBar(
           content: Text("Email ou senha inválidos!"),
-          duration: Duration(seconds: 5));
+          duration: Duration(seconds: 3));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     });
   }
@@ -189,6 +192,9 @@ class _UserLoginPageState extends State<UserLoginPage> {
                   height: 40,
                   color: AppColors.primaryOpacityColor,
                   child: TextField(
+                    style: GoogleFonts.montserrat(
+                        textStyle: TextStyle(
+                            fontSize: 16, color: AppColors.textColorBlack)),
                     controller: emailController,
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
@@ -226,6 +232,9 @@ class _UserLoginPageState extends State<UserLoginPage> {
                   height: 40,
                   color: AppColors.primaryOpacityColor,
                   child: TextField(
+                    style: GoogleFonts.montserrat(
+                        textStyle: TextStyle(
+                            fontSize: 16, color: AppColors.textColorBlack)),
                     controller: senhaController,
                     obscureText: _passwordVisible,
                     decoration: InputDecoration(

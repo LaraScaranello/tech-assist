@@ -113,7 +113,7 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
           content: Text("Usuário cadastrado com sucesso"),
           duration: Duration(seconds: 5));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      Navigator.pushNamed(context, 'login-page');
+      Navigator.of(context).pushNamed('/user-login');
     }).catchError((erro) {
       print("Aconteceu o erro: " + erro.toString());
     });
@@ -176,6 +176,9 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
                     height: 40,
                     color: AppColors.primaryOpacityColor,
                     child: TextField(
+                      style: GoogleFonts.montserrat(
+                          textStyle: TextStyle(
+                              fontSize: 16, color: AppColors.textColorBlack)),
                       controller: nomeEmpresaController,
                       maxLength: 70,
                       decoration: InputDecoration(
@@ -212,6 +215,9 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
                     height: 40,
                     color: AppColors.primaryOpacityColor,
                     child: TextField(
+                      style: GoogleFonts.montserrat(
+                          textStyle: TextStyle(
+                              fontSize: 16, color: AppColors.textColorBlack)),
                       controller: nomeController,
                       maxLength: 70,
                       decoration: InputDecoration(
@@ -286,6 +292,9 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
                     height: 40,
                     color: AppColors.primaryOpacityColor,
                     child: TextField(
+                      style: GoogleFonts.montserrat(
+                          textStyle: TextStyle(
+                              fontSize: 16, color: AppColors.textColorBlack)),
                       controller: emailController,
                       maxLength: 30,
                       keyboardType: TextInputType.emailAddress,
@@ -323,6 +332,9 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
                     height: 40,
                     color: AppColors.primaryOpacityColor,
                     child: TextField(
+                      style: GoogleFonts.montserrat(
+                          textStyle: TextStyle(
+                              fontSize: 16, color: AppColors.textColorBlack)),
                       controller: senhaController,
                       maxLength: 15,
                       obscureText: _passwordVisible,
@@ -373,6 +385,9 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
                     height: 40,
                     color: AppColors.primaryOpacityColor,
                     child: TextField(
+                      style: GoogleFonts.montserrat(
+                          textStyle: TextStyle(
+                              fontSize: 16, color: AppColors.textColorBlack)),
                       controller: confirmaSenhaController,
                       maxLength: 15,
                       obscureText: _passwordVisible,

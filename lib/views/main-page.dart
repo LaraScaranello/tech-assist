@@ -3,11 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tech_assist/utils/appColors.dart';
-import 'package:tech_assist/views/budgets-page.dart';
-import 'package:tech_assist/views/clients-page.dart';
-import 'package:tech_assist/views/files-page.dart';
+import 'package:tech_assist/views/clients/clients-page.dart';
+import 'package:tech_assist/views/budgets/budgets-page.dart';
+import 'package:tech_assist/views/files/files-page.dart';
 import 'package:tech_assist/views/home-page.dart';
-import 'package:tech_assist/views/my-account-page.dart';
+import 'package:tech_assist/views/user/my-account-page.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -57,9 +57,10 @@ class _MainPageState extends State<MainPage> {
           BottomNavigationBarItem(
               icon: Icon(Icons.description), label: 'Fichas'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.fact_check), label: 'Orçamentos'),
+              icon: Icon(Icons.assignment_turned_in_rounded),
+              label: 'Orçamentos'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.person_search), label: 'Clientes'),
+              icon: Icon(Icons.badge_rounded), label: 'Clientes'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Conta'),
         ],
       ),
