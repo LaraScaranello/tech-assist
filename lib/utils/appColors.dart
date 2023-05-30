@@ -23,4 +23,8 @@ class AppColors {
       colors: [Color(0xff4D5FC5), Color(0xff1D2E8D)],
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter);
+  static Gradient colorDegradeRed = LinearGradient(colors: [
+    Color.fromARGB(255, 165, 65, 65),
+    Color.fromARGB(255, 167, 43, 43)
+  ], begin: Alignment.topCenter, end: Alignment.bottomCenter);
 }

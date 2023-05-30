@@ -1,14 +1,18 @@
-// ignore_for_file: sized_box_for_whitespace, prefer_const_constructors, avoid_unnecessary_containers, prefer_interpolation_to_compose_strings, use_key_in_widget_constructors, unused_local_variable, unnecessary_new
+// ignore_for_file: sized_box_for_whitespace, prefer_const_constructors, avoid_unnecessary_containers, prefer_interpolation_to_compose_strings, use_key_in_widget_constructors, unused_local_variable, unnecessary_new, must_be_immutable, unused_element
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:tech_assist/model/clients.dart';
 import 'package:tech_assist/utils/appColors.dart';
 import 'package:tech_assist/controller/client-controller.dart';
+import 'package:tech_assist/main.dart';
 
 class CreateClient extends StatefulWidget {
-  //const OpenFile({super.key});
+  final String? cliente;
+
+  const CreateClient({Key? key, this.cliente}) : super(key: key);
 
   @override
   State<CreateClient> createState() => _CreateClientState();
@@ -20,26 +24,89 @@ class _CreateClientState extends State<CreateClient> {
   var emailController = TextEditingController();
   var telefoneController = TextEditingController();
 
-  void validarCampos() {
-    String msgErro = '';
+  // variáveis
+  String titlePage = '';
+  String msgErro = '';
+  String? idClient = '';
+  bool isButtonVisible = false;
+  bool? isCheckedStatus = true;
 
+  void validarCampos() {
     if (nomeController.text.isEmpty) {
       msgErro = 'Preencha o nome';
     } else if (emailController.text.isEmpty) {
       msgErro = 'Preencha o e-mail';
+    } else if (!emailController.text.contains('@')) {
+      msgErro = 'Insira um e-mail válido';
     } else if (telefoneController.text.isEmpty) {
       msgErro = 'Preencha o telefone';
     }
 
     if (msgErro.isEmpty) {
-      Clients client = new Clients(
-          nomeController.text, emailController.text, telefoneController.text);
+      Clients client = new Clients(userId, nomeController.text,
+          emailController.text, telefoneController.text, isCheckedStatus!);
 
-      newClient(context, client);
+      if (widget.cliente != null) {
+        updateClient(context, widget.cliente.toString(), client);
+      } else {
+        newClient(context, client);
+      }
+      Navigator.pop(context);
     } else {
-      final SnackBar snackBar =
-          SnackBar(content: Text(msgErro), duration: Duration(seconds: 5));
+      final SnackBar snackBar = SnackBar(
+        content: Text(msgErro),
+        duration: Duration(seconds: 5),
+        backgroundColor: AppColors.textColorRed,
+      );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      msgErro = '';
+    }
+  }
+
+  void removerCliente() async {
+    if (widget.cliente == null) {
+      msgErro = "Registro não encontrado";
+    }
+
+    if (msgErro.isEmpty) {
+      deleteClient(context, idClient.toString());
+      Navigator.pop(context);
+    }
+  }
+
+  void recuperarDados() async {
+    if (widget.cliente != null) {
+      FirebaseFirestore db = FirebaseFirestore.instance;
+      DocumentSnapshot snapshot =
+          await db.collection("clients").doc(widget.cliente).get();
+      Map<String, dynamic> dados = snapshot.data() as Map<String, dynamic>;
+
+      setState(() {
+        idClient = widget.cliente!;
+        nomeController.text = dados['cliente'].toString();
+        emailController.text = dados['email'].toString();
+        telefoneController.text = dados['telefone'].toString();
+        isCheckedStatus = dados['status'];
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    nomeController.clear();
+    emailController.clear();
+    telefoneController.clear();
+
+    if (widget.cliente != null) {
+      recuperarDados();
+      titlePage = "Editando Cliente";
+      isButtonVisible = true;
+    } else {
+      titlePage = "Novo Cliente";
+      isCheckedStatus = true;
+      isButtonVisible = false;
     }
   }
 
@@ -50,6 +117,7 @@ class _CreateClientState extends State<CreateClient> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: SingleChildScrollView(
         child: Container(
           width: double.infinity,
@@ -61,7 +129,7 @@ class _CreateClientState extends State<CreateClient> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Cliente",
+                      titlePage,
                       style: GoogleFonts.montserrat(
                           textStyle: TextStyle(
                               fontSize: 24,
@@ -191,6 +259,27 @@ class _CreateClientState extends State<CreateClient> {
                   ),
                 ),
                 Padding(
+                  padding: EdgeInsets.only(top: 20),
+                  child: Container(
+                    alignment: AlignmentDirectional.centerStart,
+                    width: double.infinity,
+                    child: Row(
+                      children: [
+                        Checkbox(
+                          activeColor: AppColors.secondColor,
+                          value: isCheckedStatus,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              isCheckedStatus = value!;
+                            });
+                          },
+                        ),
+                        const Text('Ativo'),
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
                   padding: const EdgeInsets.only(top: 20),
                   child: Container(
                     width: double.infinity,
@@ -202,7 +291,7 @@ class _CreateClientState extends State<CreateClient> {
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent),
                       child: Text(
-                        "Cadastrar",
+                        "Salvar",
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.w500),
                       ),
@@ -212,6 +301,56 @@ class _CreateClientState extends State<CreateClient> {
                     ),
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Container(
+                    width: double.infinity,
+                    height: 48,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(4)),
+                        border: Border.all(
+                            width: 1, color: AppColors.textColorBlue)),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white),
+                      child: Text(
+                        "Cancelar",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.secondColor),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                ),
+                /*Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Visibility(
+                    visible: isButtonVisible,
+                    child: Container(
+                      width: double.infinity,
+                      height: 48,
+                      decoration: BoxDecoration(
+                          gradient: AppColors.colorDegradeRed,
+                          borderRadius: BorderRadius.all(Radius.circular(4))),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent),
+                        child: Text(
+                          "Inativar",
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.w500),
+                        ),
+                        onPressed: () {
+                          removerCliente();
+                        },
+                      ),
+                    ),
+                  ),
+                ),*/
               ],
             ),
           ),

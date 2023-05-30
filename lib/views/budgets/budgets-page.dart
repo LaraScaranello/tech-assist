@@ -58,68 +58,79 @@ class _BudgetsPageState extends State<BudgetsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(130),
+        child: Container(
+          margin: EdgeInsets.only(top: 60),
+          child: Center(
+            child: Column(
+              children: [
+                Text(
+                  "Orçamentos",
+                  style: GoogleFonts.montserrat(
+                      textStyle: TextStyle(
+                          fontSize: 24,
+                          color: AppColors.secondColor,
+                          fontWeight: FontWeight.w600)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 320,
+                        height: 40,
+                        decoration: BoxDecoration(
+                            color: AppColors.primaryOpacityColor,
+                            borderRadius: BorderRadius.all(Radius.circular(4))),
+                        child: TextField(
+                          style: GoogleFonts.montserrat(
+                              textStyle: TextStyle(
+                                  fontSize: 16,
+                                  color: AppColors.textColorBlack)),
+                          controller: searchController,
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(4)),
+                              hintText:
+                                  "Número do orçamento ou nome do cliente",
+                              contentPadding: EdgeInsets.all(15),
+                              hintStyle: GoogleFonts.montserrat(
+                                  fontSize: 12,
+                                  color: AppColors.textColorBlack)),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8),
+                        child: Container(
+                          width: 38,
+                          height: 40,
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(4)),
+                              color: Colors.white,
+                              border: Border.all(
+                                  width: 1, color: AppColors.secondColor)),
+                          child: Center(
+                              child: Icon(Icons.search,
+                                  color: AppColors.secondColor)),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
       body: Container(
         width: double.infinity,
         child: Padding(
-          padding: EdgeInsets.only(left: 20, right: 20, bottom: 10, top: 70),
+          padding: EdgeInsets.only(left: 20, right: 20, bottom: 10, top: 2),
           child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Orçamentos",
-                    style: GoogleFonts.montserrat(
-                        textStyle: TextStyle(
-                            fontSize: 24,
-                            color: AppColors.titleColorBlack,
-                            fontWeight: FontWeight.w600)),
-                  )
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 320,
-                      height: 40,
-                      decoration: BoxDecoration(
-                          color: AppColors.primaryOpacityColor,
-                          borderRadius: BorderRadius.all(Radius.circular(4))),
-                      child: TextField(
-                        style: GoogleFonts.montserrat(
-                            textStyle: TextStyle(
-                                fontSize: 16, color: AppColors.textColorBlack)),
-                        controller: searchController,
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(4)),
-                            hintText: "Número do orçamento ou nome do cliente",
-                            contentPadding: EdgeInsets.all(15),
-                            hintStyle: GoogleFonts.montserrat(
-                                fontSize: 12, color: AppColors.textColorBlack)),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8),
-                      child: Container(
-                        width: 38,
-                        height: 40,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(4)),
-                            color: Colors.white,
-                            border: Border.all(
-                                width: 1, color: AppColors.secondColor)),
-                        child: Center(
-                            child: Icon(Icons.search,
-                                color: AppColors.secondColor)),
-                      ),
-                    )
-                  ],
-                ),
-              ),
               Padding(
                 padding: const EdgeInsets.only(top: 16, left: 8),
                 child: Row(
@@ -128,13 +139,13 @@ class _BudgetsPageState extends State<BudgetsPage> {
                     Text(
                       "Filtrar por",
                       style: GoogleFonts.montserrat(
-                          fontSize: 14, color: AppColors.textColorBlack),
+                          fontSize: 16, color: AppColors.textColorBlack),
                     ),
                   ],
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 8, bottom: 24),
+                padding: const EdgeInsets.only(top: 8, bottom: 48),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -151,7 +162,8 @@ class _BudgetsPageState extends State<BudgetsPage> {
                               hint: Text(
                                 "Status",
                                 style: GoogleFonts.montserrat(
-                                  fontSize: 12,
+                                  fontSize: 14,
+                                  color: AppColors.textColorBlack,
                                 ),
                               ),
                               decoration: InputDecoration(
@@ -194,7 +206,8 @@ class _BudgetsPageState extends State<BudgetsPage> {
                                 hint: Text(
                                   "Mês",
                                   style: GoogleFonts.montserrat(
-                                    fontSize: 12,
+                                    fontSize: 14,
+                                    color: AppColors.textColorBlack,
                                   ),
                                 ),
                                 decoration: InputDecoration(
@@ -238,7 +251,8 @@ class _BudgetsPageState extends State<BudgetsPage> {
                                 hint: Text(
                                   "Ano",
                                   style: GoogleFonts.montserrat(
-                                    fontSize: 12,
+                                    fontSize: 14,
+                                    color: AppColors.textColorBlack,
                                   ),
                                 ),
                                 decoration: InputDecoration(
@@ -311,7 +325,7 @@ class _BudgetsPageState extends State<BudgetsPage> {
     );
   }
 
-  // método que cria a lista de fichas de atendimento
+  // método que cria a lista de orçamentos
   Widget buildBudget(Budgets obj) {
     return GestureDetector(
       onTap: () {
@@ -320,8 +334,6 @@ class _BudgetsPageState extends State<BudgetsPage> {
       child: Container(
         margin: EdgeInsets.only(bottom: 8),
         padding: EdgeInsets.all(16),
-        width: 312,
-        height: 112,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(4)),
             border: Border.all(width: 1, color: AppColors.secondColor)),
@@ -334,7 +346,7 @@ class _BudgetsPageState extends State<BudgetsPage> {
                   Text(
                     obj.cliente,
                     style: GoogleFonts.montserrat(
-                      fontSize: 16,
+                      fontSize: 18,
                       fontWeight: FontWeight.w600,
                       color: AppColors.textColorBlack,
                     ),
@@ -343,7 +355,7 @@ class _BudgetsPageState extends State<BudgetsPage> {
                   Text(
                     "N° " + obj.numFicha.toString(),
                     style: GoogleFonts.montserrat(
-                      fontSize: 10,
+                      fontSize: 14,
                       fontWeight: FontWeight.w700,
                       color: AppColors.textColorGrey2,
                     ),
@@ -359,7 +371,7 @@ class _BudgetsPageState extends State<BudgetsPage> {
                   children: [
                     Icon(
                       Icons.watch_later_outlined,
-                      size: 12,
+                      size: 14,
                       color: AppColors.secondColor,
                     ),
                     Padding(
@@ -367,7 +379,7 @@ class _BudgetsPageState extends State<BudgetsPage> {
                       child: Text(
                         obj.dataAbertura.toString().substring(0, 10),
                         style: GoogleFonts.montserrat(
-                            fontSize: 12, color: AppColors.textColorGrey2),
+                            fontSize: 14, color: AppColors.textColorGrey2),
                       ),
                     ),
                   ],
@@ -381,7 +393,7 @@ class _BudgetsPageState extends State<BudgetsPage> {
                     children: [
                       Icon(
                         Icons.build,
-                        size: 12,
+                        size: 14,
                         color: AppColors.secondColor,
                       ),
                       Padding(
@@ -389,7 +401,7 @@ class _BudgetsPageState extends State<BudgetsPage> {
                         child: Text(
                           obj.aparelho,
                           style: GoogleFonts.montserrat(
-                              fontSize: 12, color: AppColors.textColorGrey2),
+                              fontSize: 14, color: AppColors.textColorGrey2),
                         ),
                       ),
                     ],
@@ -399,7 +411,7 @@ class _BudgetsPageState extends State<BudgetsPage> {
                     children: [
                       Icon(
                         Icons.circle,
-                        size: 8,
+                        size: 14,
                         color: AppColors.green,
                       ),
                       Padding(
@@ -407,7 +419,7 @@ class _BudgetsPageState extends State<BudgetsPage> {
                         child: Text(
                           obj.status,
                           style: GoogleFonts.montserrat(
-                              fontSize: 12, color: AppColors.textColorGrey2),
+                              fontSize: 14, color: AppColors.textColorGrey2),
                         ),
                       )
                     ],

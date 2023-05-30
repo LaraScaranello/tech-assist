@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tech_assist/controller/user-controller.dart';
+import 'package:tech_assist/main.dart';
 import 'package:tech_assist/utils/appColors.dart';
 import 'package:tech_assist/views/clients/clients-page.dart';
 import 'package:tech_assist/views/budgets/budgets-page.dart';
@@ -21,7 +23,7 @@ class _MainPageState extends State<MainPage> {
     FilesPage(),
     BudgetsPage(),
     ClientsPage(),
-    MyAccountPage(),
+    MyAccountPage(usuario: userId),
   ];
 
   int currentIndex = 0;
@@ -30,6 +32,12 @@ class _MainPageState extends State<MainPage> {
     setState(() {
       currentIndex = index;
     });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
   }
 
   @override
@@ -42,7 +50,7 @@ class _MainPageState extends State<MainPage> {
         onTap: onTap,
         currentIndex: currentIndex,
         selectedItemColor: AppColors.secondColor,
-        unselectedItemColor: AppColors.secondColor.withOpacity(0.7),
+        unselectedItemColor: AppColors.secondColor.withOpacity(0.5),
         showUnselectedLabels: true,
         showSelectedLabels: true,
         selectedFontSize: 12,
