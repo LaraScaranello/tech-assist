@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_new, file_names, unused_local_variable, prefer_const_constructors, sized_box_for_whitespace, unused_label, non_constant_identifier_names, avoid_types_as_parameter_names, must_call_super, annotate_overrides, prefer_interpolation_to_compose_strings, avoid_print
+// ignore_for_file: unnecessary_new, file_names, unused_local_variable, prefer_const_constructors, sized_box_for_whitespace, unused_label, non_constant_identifier_names, avoid_types_as_parameter_names, must_call_super, annotate_overrides, prefer_interpolation_to_compose_strings, avoid_print, use_key_in_widget_constructors
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +6,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:tech_assist/Utils/appColors.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:tech_assist/controller/user-controller.dart';
 import 'package:tech_assist/model/users.dart';
+
+import '../../main.dart';
 
 class RegisterUserPage extends StatefulWidget {
   //const RegisterUserPage({super.key});
@@ -18,8 +21,20 @@ class RegisterUserPage extends StatefulWidget {
 bool _passwordVisible = true;
 
 class _RegisterUserPageState extends State<RegisterUserPage> {
+  @override
   void initState() {
-    _passwordVisible = true;
+    super.initState();
+
+    setState(() {
+      _passwordVisible = true;
+
+      nomeEmpresaController.clear();
+      nomeController.clear();
+      telefoneController.clear();
+      emailController.clear();
+      senhaController.clear();
+      confirmaSenhaController.clear();
+    });
   }
 
   // controladores dos campos de texto
@@ -41,87 +56,49 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
   final _formKey = GlobalKey<FormState>();
 
   // método que valida os campos
-  void validaCampos() {
-    // passo 1 - recuperar os dados
-    String nomeEmpresa = nomeEmpresaController.text;
-    String nome = nomeController.text;
-    String telefone = telefoneController.text;
-    String email = emailController.text;
-    String senha = senhaController.text;
-    String confirmaSenha = confirmaSenhaController.text;
+  void validarCampos() {
     String msgErro = "";
 
-    if (nomeEmpresa.isNotEmpty) {
-      if (nome.isNotEmpty) {
-        if (telefone.isNotEmpty) {
-          if (email.isNotEmpty && email.contains("@")) {
-            if (senha.isNotEmpty && senha.length > 6) {
-              if (confirmaSenha == senha) {
-                if (termos == false) {
-                  msgErro = "Aceite os termos e condições";
-                } else {
-                  // passo 2 - cadastro no banco de dados
-                  // 1: receber os dados da interface em um objeto model
-                  Users user = new Users();
-
-                  user.nomeEmpresa = nomeEmpresa;
-                  user.nome = nome;
-                  user.telefone = telefone;
-                  user.email = email;
-                  user.senha = senha;
-
-                  // 2: executar o método cadastraUsuario(user)
-                  cadastraUsuario(user);
-                }
-              } else {
-                msgErro = "As senhas não combinam";
-              }
-            } else {
-              msgErro = "Preencha a senha com mais de 6 caracteres";
-            }
-          } else {
-            msgErro = "Preencha o e-mail";
-          }
-        } else {
-          msgErro = "Preencha o telefone";
-        }
-      } else {
-        msgErro = "Preencha o nome";
-      }
-    } else {
+    if (nomeEmpresaController.text.isEmpty) {
       msgErro = "Preencha o nome da empresa";
+    } else if (nomeController.text.isEmpty) {
+      msgErro = "Preencha o nome do responsável";
+    } else if (telefoneController.text.isEmpty) {
+      msgErro = "Preencha o telefone";
+    } else if (emailController.text.isEmpty) {
+      msgErro = "Preencha o e-mail";
+    } else if (!emailController.text.contains('@')) {
+      msgErro = "Digite um e-mail válido";
+    } else if (senhaController.text.isEmpty) {
+      msgErro = "Preencha a senha";
+    } else if (senhaController.text.length < 6) {
+      msgErro = "Preencha a senha com 6 ou mais caracteres";
+    } else if (confirmaSenhaController.text.isEmpty) {
+      msgErro = "Por favor, confirme a senha";
+    } else if (senhaController.text != confirmaSenhaController.text) {
+      msgErro = "As senhas não combinam";
+    } else if (termos == false) {
+      msgErro = "Aceite os termos e condições";
     }
 
-    if (msgErro != "") {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        backgroundColor: AppColors.textColorRed,
-        content: Text(msgErro),
-      ));
-    }
-  }
-
-  // Método que cadastra o usuário no firebase
-  void cadastraUsuario(user) async {
-    // instanciar o firebase (autenticação)
-    FirebaseAuth auth = FirebaseAuth.instance;
-
-    // criar o usuário com email e senha
-    auth
-        .createUserWithEmailAndPassword(email: user.email, password: user.senha)
-        .then((firebaseUser) {
+    if (msgErro.isEmpty) {
+      Users user = new Users(nomeEmpresaController.text, nomeController.text,
+          telefoneController.text, emailController.text, senhaController.text);
+      newUser(context, user);
+    } else {
       final SnackBar snackBar = SnackBar(
-          content: Text("Usuário cadastrado com sucesso"),
-          duration: Duration(seconds: 5));
+        content: Text(msgErro),
+        duration: Duration(seconds: 5),
+        backgroundColor: AppColors.textColorRed,
+      );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      Navigator.of(context).pushNamed('/user-login');
-    }).catchError((erro) {
-      print("Aconteceu o erro: " + erro.toString());
-    });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: Container(
         decoration: BoxDecoration(color: Colors.white),
         width: double.infinity,
@@ -452,7 +429,7 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
                             fontSize: 20, fontWeight: FontWeight.w500),
                       ),
                       onPressed: () {
-                        validaCampos();
+                        validarCampos();
                       },
                     ),
                   ),

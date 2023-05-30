@@ -1,10 +1,14 @@
-// ignore_for_file: prefer_const_constructors, file_names, sized_box_for_whitespace, avoid_print, sort_child_properties_last, unused_local_variable, must_call_super, prefer_interpolation_to_compose_strings
+// ignore_for_file: prefer_const_constructors, file_names, sized_box_for_whitespace, avoid_print, sort_child_properties_last, unused_local_variable, must_call_super, prefer_interpolation_to_compose_strings, use_key_in_widget_constructors
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tech_assist/Utils/appColors.dart';
+import 'package:tech_assist/controller/user-controller.dart';
+import 'package:tech_assist/main.dart';
+import 'package:tech_assist/model/users.dart';
+import 'package:tech_assist/views/main-page.dart';
 
 class UserLoginPage extends StatefulWidget {
   //const UserLoginPage({super.key});
@@ -120,36 +124,26 @@ Future<void> exibirRedefinirSenha(BuildContext context) {
 class _UserLoginPageState extends State<UserLoginPage> {
   bool _passwordVisible = true;
 
-  @override
-  void initState() {
-    _passwordVisible = true;
-  }
-
   // controladores dos campos de texto
   var emailController = TextEditingController();
   var senhaController = TextEditingController();
 
   // método para efetuar o login no firebase
-  void efetuaLogin() async {
-    // instanciar o firebase auth (autenticação)
-    FirebaseAuth auth = FirebaseAuth.instance;
 
-    // método para realizar o login com email e senha
-    auth
-        .signInWithEmailAndPassword(
-            email: emailController.text, password: senhaController.text)
-        .then((firebaseUser) {
-      final SnackBar snackBar = SnackBar(
-          content: Text("Login efetuado com sucesso"),
-          duration: Duration(seconds: 3));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      Navigator.of(context).pushNamed('/main-page');
-    }).catchError((error) {
-      print("Erro ao efetuar o login" + error.toString());
-      final SnackBar snackBar = SnackBar(
-          content: Text("Email ou senha inválidos!"),
-          duration: Duration(seconds: 3));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  void loginApp() async {
+    Users user = new Users.Login(emailController.text, senhaController.text);
+    efetuaLogin(context, user);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    setState(() {
+      _passwordVisible = true;
+
+      emailController.clear();
+      senhaController.clear();
     });
   }
 
@@ -296,7 +290,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                   ),
                   onPressed: () {
-                    efetuaLogin();
+                    loginApp();
                   },
                 ),
               ),
