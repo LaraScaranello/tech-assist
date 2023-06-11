@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unnecessary_new
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unnecessary_new, sort_child_properties_last, unused_local_variable, use_build_context_synchronously
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:tech_assist/controller/user-controller.dart';
-import 'package:tech_assist/model/users.dart';
 import 'package:tech_assist/utils/appColors.dart';
 import 'package:lottie/lottie.dart';
+import 'package:tech_assist/views/user/user-login.dart';
 
 class MyAccountPage extends StatefulWidget {
   final String? usuario;
@@ -19,20 +19,102 @@ class MyAccountPage extends StatefulWidget {
   State<MyAccountPage> createState() => _MyAccountPageState();
 }
 
+// variáveis
+String msgErro = '';
+bool isButtonVisible = false;
+
+// função para inativar uma conta de usuário
+void removerUsuario(BuildContext context, String usuario) async {
+  if (usuario.isEmpty) {
+    msgErro = "Registro não encontrado";
+  }
+
+  if (msgErro.isEmpty) {
+    confirmaExclusao(context, usuario);
+    Navigator.pop(context);
+    Navigator.of(context).pushNamed('/user-login');
+  }
+}
+
+//exibir caixa de diálogo para confirmar a exclusão da conta do usuário
+Future<void> confirmaExclusao(BuildContext context, String usuario) {
+  return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Tem certeza que deseja excluir a sua conta?",
+              style: GoogleFonts.montserrat(
+                textStyle: TextStyle(
+                    fontSize: 20,
+                    color: AppColors.titleColorBlack,
+                    fontWeight: FontWeight.w600),
+              ),
+              textAlign: TextAlign.center),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 24),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Container(
+                      height: 36,
+                      decoration: BoxDecoration(
+                          gradient: AppColors.colorDegrade,
+                          borderRadius: BorderRadius.all(Radius.circular(4))),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          removerUsuario(context, usuario);
+                        },
+                        child: Text("Sim",
+                            style: GoogleFonts.montserrat(
+                              textStyle: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500),
+                            )),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent),
+                      ),
+                    ),
+                    Container(
+                      height: 36,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(4)),
+                          border: Border.all(
+                              width: 1, color: AppColors.textColorBlue)),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text("Não",
+                            style: GoogleFonts.montserrat(
+                              textStyle: TextStyle(
+                                  fontSize: 16,
+                                  color: AppColors.textColorBlue,
+                                  fontWeight: FontWeight.w500),
+                            )),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white),
+                      ),
+                    ),
+                  ]),
+            ),
+          ],
+        );
+      });
+}
+
 class _MyAccountPageState extends State<MyAccountPage> {
   // controladores dos campos de texto
   var nomeEmpresaController = new TextEditingController();
   var nomeController = new TextEditingController();
   var telefoneController = new TextEditingController();
 
-  // variáveis
-  String msgErro = '';
-  bool isButtonVisible = false;
-
   // máscaras
   final maskTelefone = MaskTextInputFormatter(
       mask: "(##)#####-####", filter: {"#": RegExp(r'[0-9]')});
 
+  // validar campos para poder salvar a atualização do usuário
   void validarCampos() {
     if (nomeEmpresaController.text.isEmpty) {
       msgErro = 'Preencha o nome da empresa';
@@ -41,26 +123,34 @@ class _MyAccountPageState extends State<MyAccountPage> {
     } else if (telefoneController.text.isEmpty) {
       msgErro = 'Preencha o telefone';
     }
-  }
-
-  void removerUsuario() async {
-    if (widget.usuario == null) {
-      msgErro = "Registro não encontrado";
-    }
 
     if (msgErro.isEmpty) {
-      deleteUser(context, widget.usuario.toString());
-      Navigator.pop(context);
+      if (widget.usuario != null) {
+        updateUser(
+            context,
+            widget.usuario.toString(),
+            nomeEmpresaController.text,
+            nomeController.text,
+            telefoneController.text);
+      }
+    } else {
+      final SnackBar snackBar = SnackBar(
+        content: Text(msgErro),
+        duration: Duration(seconds: 5),
+        backgroundColor: AppColors.textColorRed,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      msgErro = '';
     }
   }
 
+  // função para recuperar os dados do usuário logado e trazer as informações na tela
   void recuperarDados() async {
     if (widget.usuario != null) {
       FirebaseFirestore db = FirebaseFirestore.instance;
       DocumentSnapshot snapshot = await db
           .collection("users")
-          .where('idUser',
-              isEqualTo: widget.usuario) // Adicione a cláusula where aqui
+          .where('idUser', isEqualTo: widget.usuario)
           .get()
           .then((QuerySnapshot querySnapshot) {
         if (querySnapshot.size > 0) {
@@ -75,17 +165,23 @@ class _MyAccountPageState extends State<MyAccountPage> {
           });
           return querySnapshot.docs.first;
         } else {
-          throw Exception(
-              'Documento não encontrado'); // Lança uma exceção se nenhum documento for encontrado
+          throw Exception('Documento não encontrado');
         }
       });
     }
   }
 
+  // função para sair da conta
   void fazerLogout() async {
     await FirebaseAuth.instance.signOut();
+
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => UserLoginPage()),
+      (Route<dynamic> route) => false,
+    );
   }
 
+  // iniciar o estado da tela da aplicação
   @override
   void initState() {
     super.initState();
@@ -103,13 +199,24 @@ class _MyAccountPageState extends State<MyAccountPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(120),
         child: Container(
-          margin: EdgeInsets.only(top: 60),
-          child: Column(
+          margin: EdgeInsets.only(top: 60, left: 16, right: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              lottieAnimation(),
+              Column(
+                children: [
+                  lottieAnimation(),
+                ],
+              ),
+              GestureDetector(
+                child:
+                    Icon(Icons.logout, color: AppColors.primaryColor, size: 40),
+                onTap: fazerLogout,
+              ),
             ],
           ),
         ),
@@ -237,6 +344,8 @@ class _MyAccountPageState extends State<MyAccountPage> {
                     ),
                   ),
                 ),
+
+                // área do botão salvar - atualizar as informações do usuário
                 Padding(
                   padding: const EdgeInsets.only(top: 40),
                   child: Container(
@@ -254,11 +363,13 @@ class _MyAccountPageState extends State<MyAccountPage> {
                             fontSize: 20, fontWeight: FontWeight.w500),
                       ),
                       onPressed: () {
-                        //updateUser();
+                        validarCampos();
                       },
                     ),
                   ),
                 ),
+
+                // área para inativar a conta do usuário
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
                   child: Container(
@@ -271,14 +382,14 @@ class _MyAccountPageState extends State<MyAccountPage> {
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent),
                       child: Text(
-                        "Sair da Conta",
+                        "Excluir minha conta",
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.w500),
                       ),
                       onPressed: () {
-                        fazerLogout();
-                        Navigator.of(context)
-                            .popUntil((route) => route.isFirst);
+                        setState(() {
+                          confirmaExclusao(context, widget.usuario.toString());
+                        });
                       },
                     ),
                   ),

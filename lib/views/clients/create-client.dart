@@ -1,4 +1,4 @@
-// ignore_for_file: sized_box_for_whitespace, prefer_const_constructors, avoid_unnecessary_containers, prefer_interpolation_to_compose_strings, use_key_in_widget_constructors, unused_local_variable, unnecessary_new, must_be_immutable, unused_element
+// ignore_for_file: sized_box_for_whitespace, prefer_const_constructors, avoid_unnecessary_containers, prefer_interpolation_to_compose_strings, use_key_in_widget_constructors, unused_local_variable, unnecessary_new, must_be_immutable, unused_element, unrelated_type_equality_checks, use_build_context_synchronously
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +21,7 @@ class CreateClient extends StatefulWidget {
 class _CreateClientState extends State<CreateClient> {
   // controladores dos campos de texto
   var nomeController = TextEditingController();
+  var documentoController = TextEditingController();
   var emailController = TextEditingController();
   var telefoneController = TextEditingController();
 
@@ -31,9 +32,11 @@ class _CreateClientState extends State<CreateClient> {
   bool isButtonVisible = false;
   bool? isCheckedStatus = true;
 
-  void validarCampos() {
+  Future<void> validarCampos() async {
     if (nomeController.text.isEmpty) {
       msgErro = 'Preencha o nome';
+    } else if (documentoController.text.isEmpty) {
+      msgErro = 'Preencha o CPF';
     } else if (emailController.text.isEmpty) {
       msgErro = 'Preencha o e-mail';
     } else if (!emailController.text.contains('@')) {
@@ -43,15 +46,32 @@ class _CreateClientState extends State<CreateClient> {
     }
 
     if (msgErro.isEmpty) {
-      Clients client = new Clients(userId, nomeController.text,
-          emailController.text, telefoneController.text, isCheckedStatus!);
+      Clients client = new Clients(
+          userId,
+          nomeController.text,
+          documentoController.text,
+          emailController.text,
+          telefoneController.text,
+          isCheckedStatus!);
 
       if (widget.cliente != null) {
         updateClient(context, widget.cliente.toString(), client);
+        Navigator.pop(context);
       } else {
-        newClient(context, client);
+        bool cpfCadastrado = await verificaDocumento(client.documento);
+
+        if (cpfCadastrado) {
+          final snackBar = SnackBar(
+            content: Text("O CPF informado já está cadastrado"),
+            duration: Duration(seconds: 5),
+            backgroundColor: AppColors.textColorRed,
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        } else {
+          newClient(context, client);
+          Navigator.pop(context);
+        }
       }
-      Navigator.pop(context);
     } else {
       final SnackBar snackBar = SnackBar(
         content: Text(msgErro),
@@ -84,6 +104,7 @@ class _CreateClientState extends State<CreateClient> {
       setState(() {
         idClient = widget.cliente!;
         nomeController.text = dados['cliente'].toString();
+        documentoController.text = dados['documento'].toString();
         emailController.text = dados['email'].toString();
         telefoneController.text = dados['telefone'].toString();
         isCheckedStatus = dados['status'];
@@ -96,6 +117,7 @@ class _CreateClientState extends State<CreateClient> {
     super.initState();
 
     nomeController.clear();
+    documentoController.clear();
     emailController.clear();
     telefoneController.clear();
 
@@ -113,6 +135,8 @@ class _CreateClientState extends State<CreateClient> {
   // máscaras
   final maskTelefone = MaskTextInputFormatter(
       mask: "(##)#####-####", filter: {"#": RegExp(r'[0-9]')});
+  final maskDocumento = MaskTextInputFormatter(
+      mask: "###.###.###-##", filter: {"#": RegExp(r'[0-9]')});
 
   @override
   Widget build(BuildContext context) {
@@ -138,6 +162,7 @@ class _CreateClientState extends State<CreateClient> {
                     )
                   ],
                 ),
+                // área do campo nome do cliente
                 Padding(
                   padding: EdgeInsets.only(top: 24, bottom: 8),
                   child: Row(
@@ -177,6 +202,51 @@ class _CreateClientState extends State<CreateClient> {
                         contentPadding: EdgeInsets.all(5)),
                   ),
                 ),
+
+                // área do campo documento
+                Padding(
+                  padding: EdgeInsets.only(top: 24, bottom: 8),
+                  child: Row(
+                    children: [
+                      Icon(
+                        size: 18,
+                        Icons.person_pin_rounded,
+                        color: AppColors.secondColor,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 8),
+                        child: Text(
+                          "CPF",
+                          style: GoogleFonts.montserrat(
+                            textStyle: TextStyle(
+                                fontSize: 16, color: AppColors.textColorBlack),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  width: double.infinity,
+                  height: 40,
+                  color: AppColors.primaryOpacityColor,
+                  child: TextField(
+                    style: GoogleFonts.montserrat(
+                        textStyle: TextStyle(
+                            fontSize: 16, color: AppColors.textColorBlack)),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [maskDocumento],
+                    controller: documentoController,
+                    maxLength: 14,
+                    decoration: InputDecoration(
+                        counterText: "",
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(4)),
+                        contentPadding: EdgeInsets.all(5)),
+                  ),
+                ),
+
+                // área do campo e-mail
                 Padding(
                   padding: EdgeInsets.only(top: 20, bottom: 8),
                   child: Row(
@@ -217,6 +287,8 @@ class _CreateClientState extends State<CreateClient> {
                         contentPadding: EdgeInsets.all(5)),
                   ),
                 ),
+
+                // área do campo telefone
                 Padding(
                   padding: EdgeInsets.only(top: 20, bottom: 8),
                   child: Row(
@@ -326,31 +398,6 @@ class _CreateClientState extends State<CreateClient> {
                     ),
                   ),
                 ),
-                /*Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: Visibility(
-                    visible: isButtonVisible,
-                    child: Container(
-                      width: double.infinity,
-                      height: 48,
-                      decoration: BoxDecoration(
-                          gradient: AppColors.colorDegradeRed,
-                          borderRadius: BorderRadius.all(Radius.circular(4))),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent),
-                        child: Text(
-                          "Inativar",
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.w500),
-                        ),
-                        onPressed: () {
-                          removerCliente();
-                        },
-                      ),
-                    ),
-                  ),
-                ),*/
               ],
             ),
           ),

@@ -6,13 +6,13 @@ class Users {
   late String _nomeEmpresa;
   late String _nome;
   late String _telefone;
-  late String _email;
-  late String _senha;
+  String? _email;
+  String? _senha;
 
   // construtor
 
-  Users(String nomeEmpresa, String nome, String telefone, String email,
-      String senha) {
+  Users(String nomeEmpresa, String nome, String telefone, String? email,
+      String? senha) {
     //this._idUser = idUser;
     this._nomeEmpresa = nomeEmpresa;
     this._nome = nome;

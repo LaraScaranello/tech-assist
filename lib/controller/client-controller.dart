@@ -11,6 +11,7 @@ void newClient(BuildContext context, Clients client) async {
   try {
     await db.collection("clients").add({
       "idUser": client.idUser,
+      "documento": client.documento,
       "cliente": client.cliente,
       "email": client.email,
       "telefone": client.telefone,
@@ -21,7 +22,6 @@ void newClient(BuildContext context, Clients client) async {
         duration: Duration(seconds: 5),
         backgroundColor: AppColors.secondColor);
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    //Navigator.of(context).pushNamed('/main-page');
   } catch (e) {
     final SnackBar snackBar = SnackBar(
         content: Text("Erro ao cadastrar cliente " + e.toString()),
@@ -37,6 +37,7 @@ void updateClient(BuildContext context, String idClient, Clients client) async {
   try {
     await db.collection("clients").doc(idClient).update({
       "idUser": client.idUser,
+      "documento": client.documento,
       "cliente": client.cliente,
       "email": client.email,
       "telefone": client.telefone,
@@ -62,5 +63,18 @@ void deleteClient(BuildContext context, String idClient) async {
         duration: Duration(seconds: 5),
         backgroundColor: AppColors.textColorRed);
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+}
+
+Future<bool> verificaDocumento(String documento) async {
+  try {
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('clients')
+        .where('documento', isEqualTo: documento)
+        .limit(1)
+        .get();
+    return querySnapshot.size > 0;
+  } catch (e) {
+    return false;
   }
 }

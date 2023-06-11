@@ -1,6 +1,5 @@
-// ignore_for_file: unnecessary_new, file_names, unused_local_variable, prefer_const_constructors, sized_box_for_whitespace, unused_label, non_constant_identifier_names, avoid_types_as_parameter_names, must_call_super, annotate_overrides, prefer_interpolation_to_compose_strings, avoid_print, use_key_in_widget_constructors
+// ignore_for_file: unnecessary_new, file_names, unused_local_variable, prefer_const_constructors, sized_box_for_whitespace, unused_label, non_constant_identifier_names, avoid_types_as_parameter_names, must_call_super, annotate_overrides, prefer_interpolation_to_compose_strings, avoid_print, use_key_in_widget_constructors, unused_element
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
@@ -9,16 +8,13 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:tech_assist/controller/user-controller.dart';
 import 'package:tech_assist/model/users.dart';
 
-import '../../main.dart';
-
 class RegisterUserPage extends StatefulWidget {
-  //const RegisterUserPage({super.key});
-
   @override
   State<RegisterUserPage> createState() => _RegisterUserPageState();
 }
 
 bool _passwordVisible = true;
+bool _passwordConfirmVisible = true;
 
 class _RegisterUserPageState extends State<RegisterUserPage> {
   @override
@@ -27,6 +23,7 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
 
     setState(() {
       _passwordVisible = true;
+      _passwordConfirmVisible = true;
 
       nomeEmpresaController.clear();
       nomeController.clear();
@@ -367,18 +364,19 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
                               fontSize: 16, color: AppColors.textColorBlack)),
                       controller: confirmaSenhaController,
                       maxLength: 15,
-                      obscureText: _passwordVisible,
+                      obscureText: _passwordConfirmVisible,
                       decoration: InputDecoration(
                           suffixIcon: IconButton(
                             icon: Icon(
-                              _passwordVisible
+                              _passwordConfirmVisible
                                   ? Icons.visibility
                                   : Icons.visibility_off,
                               color: AppColors.textColorBlack,
                             ),
                             onPressed: () {
                               setState(() {
-                                _passwordVisible = !_passwordVisible;
+                                _passwordConfirmVisible =
+                                    !_passwordConfirmVisible;
                               });
                             },
                           ),

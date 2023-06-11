@@ -23,7 +23,6 @@ class _HomePageState extends State<HomePage> {
   String titlePage = '';
 
   Future recuperarNomeEmpresa(String userId) async {
-    print('disgramaaa  ' + userId.toString());
     if (userId != null) {
       FirebaseFirestore db = FirebaseFirestore.instance;
       DocumentSnapshot snapshot = await db
@@ -37,9 +36,8 @@ class _HomePageState extends State<HomePage> {
               documentSnapshot.data() as Map<String, dynamic>;
 
           setState(() {
-            titlePage = 'Olá, ' + data['nomeEmpresa'].toString().toUpperCase();
+            titlePage = 'Olá, ' + data['nomeEmpresa'].toString();
           });
-          print('hellooooo ' + titlePage.toString());
           return querySnapshot.docs.first;
         } else {
           throw Exception(
@@ -58,7 +56,6 @@ class _HomePageState extends State<HomePage> {
         .get()
         .then((QuerySnapshot querySnapshot) {
       int count = querySnapshot.size;
-      print('Total de documentos: $count');
 
       setState(() {
         totClients = 'Total de clientes: $count';

@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, file_names, sized_box_for_whitespace, avoid_print, sort_child_properties_last, unused_local_variable, must_call_super, prefer_interpolation_to_compose_strings, use_key_in_widget_constructors
+// ignore_for_file: prefer_const_constructors, file_names, sized_box_for_whitespace, avoid_print, sort_child_properties_last, unused_local_variable, must_call_super, prefer_interpolation_to_compose_strings, use_key_in_widget_constructors, unnecessary_new
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -11,8 +11,6 @@ import 'package:tech_assist/model/users.dart';
 import 'package:tech_assist/views/main-page.dart';
 
 class UserLoginPage extends StatefulWidget {
-  //const UserLoginPage({super.key});
-
   @override
   State<UserLoginPage> createState() => _UserLoginPageState();
 }
@@ -150,6 +148,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: Container(
         decoration: BoxDecoration(color: Colors.white),
         width: double.infinity,
