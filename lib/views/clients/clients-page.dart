@@ -17,10 +17,14 @@ class ClientsPage extends StatefulWidget {
 class _ClientsPageState extends State<ClientsPage> {
   var searchController = TextEditingController();
   bool inativos = false;
+  String buscaCliente = '';
 
   @override
   void initState() {
     super.initState();
+    setState(() {
+      buscaCliente = '';
+    });
   }
 
   @override
@@ -70,19 +74,27 @@ class _ClientsPageState extends State<ClientsPage> {
                         ),
                       ),
                       Padding(
+                        // aqui vai buscar
                         padding: const EdgeInsets.only(left: 8),
-                        child: Container(
-                          width: 38,
-                          height: 40,
-                          decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(4)),
-                              color: Colors.white,
-                              border: Border.all(
-                                  width: 1, color: AppColors.secondColor)),
-                          child: Center(
-                              child: Icon(Icons.search,
-                                  color: AppColors.secondColor)),
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              buscaCliente = searchController.text;
+                            });
+                          },
+                          child: Container(
+                            width: 38,
+                            height: 40,
+                            decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(4)),
+                                color: Colors.white,
+                                border: Border.all(
+                                    width: 1, color: AppColors.secondColor)),
+                            child: Center(
+                                child: Icon(Icons.search,
+                                    color: AppColors.secondColor)),
+                          ),
                         ),
                       ),
                     ],
@@ -116,24 +128,41 @@ class _ClientsPageState extends State<ClientsPage> {
         ),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('clients')
-            .where('idUser', isEqualTo: userId)
-            .where('status', isEqualTo: inativos ? null : true)
-            .snapshots(),
+        stream: buscaCliente.isNotEmpty
+            ? FirebaseFirestore.instance
+                .collection('clients')
+                .where('idUser', isEqualTo: userId)
+                .where('status', isEqualTo: inativos ? null : true)
+                .where('cliente', isEqualTo: buscaCliente)
+                .snapshots()
+            : FirebaseFirestore.instance
+                .collection('clients')
+                .where('idUser', isEqualTo: userId)
+                .where('status', isEqualTo: inativos ? null : true)
+                .orderBy('cliente')
+                .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return CircularProgressIndicator();
           }
           if (!snapshot.hasData) {
-            return Container(
-              child: Center(
-                child: FloatingActionButton(
-                  backgroundColor: AppColors.secondColor,
-                  onPressed: () =>
-                      Navigator.of(context).pushNamed('/create-client'),
-                  child: Icon(Icons.add),
-                ),
+            return Padding(
+              padding: EdgeInsets.only(right: 20, bottom: 10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      FloatingActionButton(
+                        backgroundColor: AppColors.secondColor,
+                        onPressed: () =>
+                            Navigator.of(context).pushNamed('/create-client'),
+                        child: Icon(Icons.add),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             );
           }

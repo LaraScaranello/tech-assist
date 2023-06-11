@@ -17,7 +17,6 @@ void efetuaLogin(BuildContext context, Users user) async {
       .signInWithEmailAndPassword(email: user.email, password: user.senha)
       .then((firebaseUser) {
     userId = auth.currentUser?.uid;
-    //recuperarNomeEmpresa(userId.toString());
     final SnackBar snackBar = SnackBar(
         content: Text("Login efetuado com sucesso"),
         duration: Duration(seconds: 3),
@@ -34,31 +33,32 @@ void efetuaLogin(BuildContext context, Users user) async {
   });
 }
 
+String erro = '';
 void newUser(BuildContext context, Users user) async {
   FirebaseAuth auth = FirebaseAuth.instance;
-
-  await auth
-      .createUserWithEmailAndPassword(email: user.email, password: user.senha)
-      .then((firebaseUser) {
+  try {
+    await auth
+        .createUserWithEmailAndPassword(email: user.email, password: user.senha)
+        .then((firebaseUser) {
+      final SnackBar snackBar = SnackBar(
+          content: Text('Usuário cadastrado com sucesso'),
+          duration: Duration(seconds: 5),
+          backgroundColor: AppColors.primaryColor);
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      userId = auth.currentUser?.uid;
+      newUserDocument(context, user, userId.toString());
+    });
+  } catch (e) {
+    if (e.toString().contains('firebase_auth/email-already-in-use')) {
+      erro = "O endereço de e-mail já está sendo usado";
+    }
     final SnackBar snackBar = SnackBar(
-        content: Text('Usuário cadastrado com sucesso'),
-        duration: Duration(seconds: 5),
-        backgroundColor: AppColors.primaryColor);
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    //Navigator.of(context).pushNamed('/user-login');
-    userId = auth.currentUser?.uid;
-    print('userId' + userId.toString());
-
-    newUserDocument(context, user, userId.toString());
-    //return teste;
-  }).catchError((e) {
-    final SnackBar snackBar = SnackBar(
-      content: Text("Erro ao cadastrar cliente " + e.toString()),
+      content: Text("Erro ao cadastrar cliente \n" + erro),
       duration: Duration(seconds: 5),
       backgroundColor: AppColors.textColorRed,
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  });
+  }
 }
 
 void newUserDocument(BuildContext context, Users user, String idRetorno) async {
@@ -92,16 +92,26 @@ void newUserDocument(BuildContext context, Users user, String idRetorno) async {
   }
 }
 
-void updateUser(BuildContext context, String idUser, Users user) async {
+void updateUser(BuildContext context, String idUser, String nomeEmpresa,
+    String nome, String telefone) async {
   FirebaseFirestore db = FirebaseFirestore.instance;
 
   try {
-    await db.collection("users").doc(idUser).update({
-      "nomeEmpresa": user.nomeEmpresa,
-      "nome": user.nome,
-      "telefone": user.telefone
-      //"status": user.status
+    CollectionReference usersRef =
+        FirebaseFirestore.instance.collection('users');
+    QuerySnapshot querySnapshot =
+        await usersRef.where('idUser', isEqualTo: idUser).get();
+
+    querySnapshot.docs.forEach((doc) {
+      usersRef.doc(doc.id).update(
+          {"nomeEmpresa": nomeEmpresa, "nome": nome, "telefone": telefone});
     });
+
+    final SnackBar snackBar = SnackBar(
+        content: Text("Usuário atualizado com sucesso"),
+        duration: Duration(seconds: 5),
+        backgroundColor: AppColors.primaryColor);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   } catch (e) {
     final SnackBar snackBar = SnackBar(
         content: Text("Erro ao atualizar usuário " + e.toString()),
@@ -111,16 +121,21 @@ void updateUser(BuildContext context, String idUser, Users user) async {
   }
 }
 
-void deleteUser(BuildContext context, String idUser) async {
-  FirebaseFirestore db = FirebaseFirestore.instance;
+// função para excluir a conta do usuário
+void deleteUser(BuildContext context) async {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  User? user = _auth.currentUser;
 
-  try {
-    await db.collection("users").doc(idUser).update({"status": false});
-  } catch (e) {
-    final SnackBar snackBar = SnackBar(
-        content: Text("Erro ao inativar usuário " + e.toString()),
-        duration: Duration(seconds: 5),
-        backgroundColor: AppColors.textColorRed);
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  if (user != null) {
+    try {
+      await user.delete();
+      final SnackBar snackBar = SnackBar(
+          content: Text("Usuário excluído com sucesso"),
+          duration: Duration(seconds: 5),
+          backgroundColor: AppColors.primaryColor);
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Navigator.pop(context);
+      Navigator.of(context).pushNamed('/user-login');
+    } catch (e) {}
   }
 }

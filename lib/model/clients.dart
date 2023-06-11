@@ -5,15 +5,17 @@ class Clients {
   int? _idClient;
   String? _idUser;
   String? _cliente;
+  String? _documento;
   String? _telefone;
   String? _email;
   bool? _status;
 
   // construtor
-  Clients(String? idUser, String? cliente, String? email, String? telefone,
-      bool? status) {
+  Clients(String? idUser, String? cliente, String? documento, String? email,
+      String? telefone, bool? status) {
     this._idUser = idUser;
     this._cliente = cliente;
+    this._documento = documento;
     this._email = email;
     this._telefone = telefone;
     this._status = status;
@@ -28,6 +30,9 @@ class Clients {
 
   get cliente => this._cliente;
   set cliente(value) => this._cliente = value;
+
+  get documento => this._documento;
+  set documento(value) => this._documento = value;
 
   get email => this._email;
   set email(value) => this._email = value;

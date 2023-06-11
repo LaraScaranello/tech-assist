@@ -47,6 +47,7 @@ dependencies:
   firebase_auth: ^3.1.0            # Para utilizar recursos de autenticacao
   firebase_core_platform_interface: 4.5.1
   firebase_messaging: ^13.0.4
+  flutter_typeahead: ^4.6.0
 
 
 flutter_native_splash:
