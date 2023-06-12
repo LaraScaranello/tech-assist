@@ -1,4 +1,4 @@
-// ignore_for_file: sized_box_for_whitespace, prefer_const_constructors, avoid_unnecessary_containers, prefer_interpolation_to_compose_strings, use_key_in_widget_constructors, avoid_function_literals_in_foreach_calls, unused_element, unused_local_variable, unnecessary_new, use_build_context_synchronously
+// ignore_for_file: sized_box_for_whitespace, prefer_const_constructors, avoid_unnecessary_containers, prefer_interpolation_to_compose_strings, use_key_in_widget_constructors, avoid_function_literals_in_foreach_calls, unused_element, unused_local_variable, unnecessary_new, use_build_context_synchronously, annotate_overrides
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -10,9 +10,12 @@ import 'package:tech_assist/model/files.dart';
 import 'package:tech_assist/utils/appColors.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
+import 'package:tech_assist/views/budgets/create-budget.dart';
 
 class CreateFile extends StatefulWidget {
-  String? ficha;
+  final String? ficha;
+
+  const CreateFile({Key? key, this.ficha}) : super(key: key);
 
   @override
   State<CreateFile> createState() => _CreateFileState();
@@ -38,13 +41,14 @@ class _CreateFileState extends State<CreateFile> {
   var dataController = TextEditingController();
 
   //variaveis
-  String titlePage = 'Novo Chamado';
+  String titlePage = "Ficha de atendimento";
   String msgErro = '';
-  String? idOrdem = '';
+  String? fichaId = '';
   bool isButtonVisible = false;
   bool? isCheckedStatusChamado = true;
   DateTime selectedDate = DateTime.now();
   int? idFicha;
+  int? nextId;
 
   // máscaras
   final maskTelefone = MaskTextInputFormatter(
@@ -60,13 +64,14 @@ class _CreateFileState extends State<CreateFile> {
     if (pickedDate != null && pickedDate != selectedDate) {
       setState(() {
         selectedDate = pickedDate;
-        dataController.text = DateFormat('dd/MM/yyyy').format(selectedDate);
+        dataController.text =
+            DateFormat('yyyy-MM-dd HH:mm:ss').format(selectedDate);
       });
     }
   }
 
   Future<void> validarCampos() async {
-    if (dropValueStatus.value.isEmpty) {
+    if (dropValueStatus == null) {
       msgErro = 'Selecione o status da ficha';
     } else if (nomeController.text.isEmpty) {
       msgErro = 'Preencha o campo nome do cliente';
@@ -81,10 +86,7 @@ class _CreateFileState extends State<CreateFile> {
     } else if (defeitoController.text.isEmpty) {
       msgErro = 'Preencha o campo defeito';
     }
-
     if (msgErro.isEmpty) {
-      int nextId = await getNextId();
-      print(nextId);
       if (nextId != null) {
         idFicha = nextId;
       } else {
@@ -95,10 +97,11 @@ class _CreateFileState extends State<CreateFile> {
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
+
       Files file = new Files(
           userId,
           idFicha,
-          dropValueStatus.value,
+          dropValueStatus.value.toString(),
           nomeController.text,
           emailController.text,
           telefoneController.text,
@@ -106,8 +109,69 @@ class _CreateFileState extends State<CreateFile> {
           aparelhoController.text,
           defeitoController.text);
 
-      newFile(context, file);
+      if (widget.ficha != null) {
+        updateClient(context, widget.ficha.toString(), file);
+        Navigator.pop(context);
+      } else {
+        newFile(context, file);
+        Navigator.pop(context);
+      }
     }
+  }
+
+  Future<void> proximoIdFicha() async {
+    nextId = await getNextId();
+    setState(() {
+      titlePage = "Ficha de Atendimento nº $nextId";
+    });
+  }
+
+  void recuperarDados() async {
+    if (widget.ficha != null) {
+      FirebaseFirestore db = FirebaseFirestore.instance;
+      DocumentSnapshot snapshot =
+          await db.collection("files").doc(widget.ficha).get();
+      Map<String, dynamic> dados = snapshot.data() as Map<String, dynamic>;
+      setState(() {
+        fichaId = widget.ficha!;
+        nextId = dados['numFicha'];
+        dropValueStatus.value = dados['status'].toString();
+        nomeController.text = dados['cliente'].toString();
+        emailController.text = dados['email'].toString();
+        telefoneController.text = dados['telefone'].toString();
+        aparelhoController.text = dados['aparelho'].toString();
+        defeitoController.text = dados['defeito'].toString();
+        selectedDate = dados['dataAbertura'].toDate();
+        dataController.text =
+            DateFormat('yyyy-MM-dd HH:mm:ss').format(selectedDate);
+        titlePage = "Editando ficha nº $nextId";
+      });
+    }
+  }
+
+  void initState() {
+    super.initState();
+
+    setState(() {
+      nomeController.clear();
+      emailController.clear();
+      telefoneController.clear();
+      dataController.clear();
+      aparelhoController.clear();
+      defeitoController.clear();
+      telefoneController.clear();
+      dropValueStatus.value = 'Em aberto';
+
+      if (widget.ficha != null) {
+        recuperarDados();
+
+        isButtonVisible = true;
+      } else {
+        isButtonVisible = false;
+        dropValueStatus.value = dropOptionsStatus[0];
+        proximoIdFicha();
+      }
+    });
   }
 
   @override
@@ -124,7 +188,7 @@ class _CreateFileState extends State<CreateFile> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Ficha de atendimento",
+                      titlePage,
                       style: GoogleFonts.montserrat(
                           textStyle: TextStyle(
                               fontSize: 24,
@@ -232,11 +296,12 @@ class _CreateFileState extends State<CreateFile> {
                   child: TypeAheadField(
                     textFieldConfiguration: TextFieldConfiguration(
                       controller: nomeController,
-                      autofocus: true,
                       decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           contentPadding: EdgeInsets.all(8),
-                          prefixIconColor: AppColors.secondColor),
+                          prefixIconColor: AppColors.secondColor,
+                          focusColor: AppColors.primaryOpacityColor,
+                          hoverColor: AppColors.primaryOpacityColor),
                     ),
                     suggestionsCallback: (pattern) async {
                       // consulta o Firestore para obter sugestões com base no padrão fornecido
@@ -495,28 +560,89 @@ class _CreateFileState extends State<CreateFile> {
                   ),
                 ),
 
-                // área do botão para cadastrar a ficha
-                Padding(
-                  padding: const EdgeInsets.only(top: 20),
-                  child: Container(
-                    width: double.infinity,
-                    height: 48,
-                    decoration: BoxDecoration(
-                        gradient: AppColors.colorDegrade,
-                        borderRadius: BorderRadius.all(Radius.circular(4))),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent),
-                      child: Text(
-                        "Cadastrar",
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.w500),
+                Visibility(
+                  visible: isButtonVisible,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 20),
+                    child: Container(
+                      width: double.infinity,
+                      height: 48,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(4)),
+                          border: Border.all(
+                              width: 1, color: AppColors.textColorBlue)),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white),
+                        child: Text(
+                          "Criar orçamento",
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.secondColor),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CreateBudget(
+                                        ficha: fichaId,
+                                      )));
+                        },
                       ),
-                      onPressed: () {
-                        validarCampos();
-                      },
                     ),
                   ),
+                ),
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Container(
+                        width: 180,
+                        height: 48,
+                        decoration: BoxDecoration(
+                            gradient: AppColors.colorDegrade,
+                            borderRadius: BorderRadius.all(Radius.circular(4))),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent),
+                          child: Text(
+                            "Salvar",
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w500),
+                          ),
+                          onPressed: () {
+                            validarCampos();
+                          },
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8, left: 8),
+                      child: Container(
+                        width: 180,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          gradient: AppColors.colorDegradeRed,
+                          borderRadius: BorderRadius.all(Radius.circular(4)),
+                        ),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent),
+                          child: Text(
+                            "Cancelar",
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white),
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

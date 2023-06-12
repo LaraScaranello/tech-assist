@@ -54,19 +54,19 @@ class _CreateClientState extends State<CreateClient> {
           telefoneController.text,
           isCheckedStatus!);
 
-      if (widget.cliente != null) {
-        updateClient(context, widget.cliente.toString(), client);
-        Navigator.pop(context);
-      } else {
-        bool cpfCadastrado = await verificaDocumento(client.documento);
+      bool cpfCadastrado = await verificaDocumento(client.documento);
 
-        if (cpfCadastrado) {
-          final snackBar = SnackBar(
-            content: Text("O CPF informado já está cadastrado"),
-            duration: Duration(seconds: 5),
-            backgroundColor: AppColors.textColorRed,
-          );
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      if (cpfCadastrado) {
+        final snackBar = SnackBar(
+          content: Text("O CPF informado já está cadastrado"),
+          duration: Duration(seconds: 5),
+          backgroundColor: AppColors.textColorRed,
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } else {
+        if (widget.cliente != null) {
+          updateClient(context, widget.cliente.toString(), client);
+          Navigator.pop(context);
         } else {
           newClient(context, client);
           Navigator.pop(context);
@@ -351,52 +351,56 @@ class _CreateClientState extends State<CreateClient> {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 20),
-                  child: Container(
-                    width: double.infinity,
-                    height: 48,
-                    decoration: BoxDecoration(
-                        gradient: AppColors.colorDegrade,
-                        borderRadius: BorderRadius.all(Radius.circular(4))),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent),
-                      child: Text(
-                        "Salvar",
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.w500),
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: Container(
+                        width: 180,
+                        height: 48,
+                        decoration: BoxDecoration(
+                            gradient: AppColors.colorDegrade,
+                            borderRadius: BorderRadius.all(Radius.circular(4))),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent),
+                          child: Text(
+                            "Salvar",
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w500),
+                          ),
+                          onPressed: () {
+                            validarCampos();
+                          },
+                        ),
                       ),
-                      onPressed: () {
-                        validarCampos();
-                      },
                     ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: Container(
-                    width: double.infinity,
-                    height: 48,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(4)),
-                        border: Border.all(
-                            width: 1, color: AppColors.textColorBlue)),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white),
-                      child: Text(
-                        "Cancelar",
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.secondColor),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20, left: 8),
+                      child: Container(
+                        width: 180,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          gradient: AppColors.colorDegradeRed,
+                          borderRadius: BorderRadius.all(Radius.circular(4)),
+                        ),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent),
+                          child: Text(
+                            "Cancelar",
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white),
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
                       ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
                     ),
-                  ),
+                  ],
                 ),
               ],
             ),

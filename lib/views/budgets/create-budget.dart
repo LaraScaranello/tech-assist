@@ -1,12 +1,15 @@
 // ignore_for_file: sized_box_for_whitespace, prefer_const_constructors, avoid_unnecessary_containers, prefer_interpolation_to_compose_strings, use_key_in_widget_constructors
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:tech_assist/utils/appColors.dart';
 
 class CreateBudget extends StatefulWidget {
-  //const OpenFile({super.key});
+  String? ficha;
+
+  CreateBudget({Key? key, this.ficha}) : super(key: key);
 
   @override
   State<CreateBudget> createState() => _CreateBudgetState();
@@ -37,6 +40,36 @@ class _CreateBudgetState extends State<CreateBudget> {
   // máscaras
   final maskTelefone = MaskTextInputFormatter(
       mask: "(##)#####-####", filter: {"#": RegExp(r'[0-9]')});
+
+  void carregaFicha() async {
+    if (widget.ficha != null) {
+      FirebaseFirestore db = FirebaseFirestore.instance;
+      DocumentSnapshot snapshot =
+          await db.collection("files").doc(widget.ficha).get();
+      Map<String, dynamic> dados = snapshot.data() as Map<String, dynamic>;
+
+      print(dados['numFicha']);
+      setState(() {
+        dropValueStatus.value = dados['status'].toString();
+        nomeController.text = dados['cliente'].toString();
+        emailController.text = dados['email'].toString();
+        telefoneController.text = dados['telefone'].toString();
+        aparelhoController.text = dados['aparelho'].toString();
+        defeitoController.text = dados['defeito'].toString();
+      });
+    }
+  }
+
+  void initState() {
+    super.initState();
+
+    setState(() {
+      if (widget.ficha != null) {
+        // chamar função que carrega os dados da ficha no orçamento
+        carregaFicha();
+      } else {}
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
