@@ -7,7 +7,6 @@ import 'package:tech_assist/utils/appColors.dart';
 
 void newFile(BuildContext context, Files file) async {
   FirebaseFirestore db = FirebaseFirestore.instance;
-
   try {
     await db.collection("files").add({
       "idUser": file.idUser,
@@ -39,7 +38,7 @@ void newFile(BuildContext context, Files file) async {
 Future<int> getNextId() async {
   try {
     final idCounterDoc =
-        FirebaseFirestore.instance.collection('idsFiles').doc('id_counter');
+        FirebaseFirestore.instance.collection('files').doc('numFicha');
 
     final idCounterSnapshot = await idCounterDoc.get();
 
@@ -58,7 +57,29 @@ Future<int> getNextId() async {
       return nextId;
     }
   } catch (e) {
-    print('Erro ao obter próximo ID: $e');
     return -1;
+  }
+}
+
+void updateFile(BuildContext context, String idFicha, Files file) async {
+  FirebaseFirestore db = FirebaseFirestore.instance;
+
+  try {
+    await db.collection("files").doc(idFicha).update({
+      "idUser": file.idUser,
+      "status": file.status,
+      "cliente": file.cliente,
+      "email": file.email,
+      "telefone": file.telefone,
+      "dataAbertura": file.dataAbertura,
+      "aparelho": file.aparelho,
+      "defeito": file.defeito,
+    });
+  } catch (e) {
+    final SnackBar snackBar = SnackBar(
+        content: Text("Erro ao atualizar cliente " + e.toString()),
+        duration: Duration(seconds: 5),
+        backgroundColor: AppColors.textColorRed);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

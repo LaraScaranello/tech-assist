@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tech_assist/controller/user-controller.dart';
 import 'package:tech_assist/main.dart';
 import 'package:tech_assist/utils/appColors.dart';
 import 'package:tech_assist/views/clients/clients-page.dart';
@@ -36,7 +35,6 @@ class _MainPageState extends State<MainPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 

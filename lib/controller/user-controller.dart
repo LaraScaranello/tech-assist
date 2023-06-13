@@ -139,3 +139,21 @@ void deleteUser(BuildContext context) async {
     } catch (e) {}
   }
 }
+
+Future resetPassword(BuildContext context, String email) async {
+  try {
+    await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+    final SnackBar snackBar = SnackBar(
+        content: Text("E-mail enviado com sucesso"),
+        duration: Duration(seconds: 5),
+        backgroundColor: AppColors.primaryColor);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    Navigator.pop(context);
+  } on FirebaseAuthException catch (e) {
+    final SnackBar snackBar = SnackBar(
+        content: Text("Erro ao enviar o e-amil " + e.toString()),
+        duration: Duration(seconds: 5),
+        backgroundColor: AppColors.textColorRed);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+}

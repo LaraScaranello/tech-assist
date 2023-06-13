@@ -79,7 +79,10 @@ Future<void> exibirRedefinirSenha(BuildContext context) {
                           gradient: AppColors.colorDegrade,
                           borderRadius: BorderRadius.all(Radius.circular(4))),
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          resetPassword(
+                              context, emailRecuperarSenhaController.text);
+                        },
                         child: Text("Enviar",
                             style: GoogleFonts.montserrat(
                               textStyle: TextStyle(

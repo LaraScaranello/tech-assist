@@ -1,9 +1,8 @@
-// ignore_for_file: sized_box_for_whitespace, prefer_const_constructors, prefer_interpolation_to_compose_strings
+// ignore_for_file: sized_box_for_whitespace, prefer_const_constructors, prefer_interpolation_to_compose_strings, unnecessary_null_comparison, unused_local_variable
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tech_assist/controller/user-controller.dart';
 import 'package:tech_assist/main.dart';
 import 'package:tech_assist/utils/appColors.dart';
 
@@ -15,8 +14,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String totFiles = '16 Fichas de atendimento';
-  String openFiles = '3 em aberto';
+  String totFiles = '';
+  String openFiles = '';
   String totBudgets = '13 Orçamentos realizados';
   String openBudgets = '4 em andamento';
   String totClients = '';
@@ -40,8 +39,7 @@ class _HomePageState extends State<HomePage> {
           });
           return querySnapshot.docs.first;
         } else {
-          throw Exception(
-              'Documento não encontrado'); // Lança uma exceção se nenhum documento for encontrado
+          throw Exception('Documento não encontrado');
         }
       });
     }
@@ -51,26 +49,89 @@ class _HomePageState extends State<HomePage> {
     FirebaseFirestore db = FirebaseFirestore.instance;
     await db
         .collection('clients')
-        .where('idUser', isEqualTo: userId) // Adicione a cláusula where aqui
+        .where('idUser', isEqualTo: userId)
         .where('status', isEqualTo: true)
         .get()
         .then((QuerySnapshot querySnapshot) {
       int count = querySnapshot.size;
 
       setState(() {
-        totClients = 'Total de clientes: $count';
+        totClients = '$count Clientes cadastrados';
+      });
+    });
+  }
+
+  void quantidadeFichas(String userId) async {
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    await db
+        .collection('files')
+        .where('idUser', isEqualTo: userId)
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      int count = querySnapshot.size;
+
+      setState(() {
+        totFiles = '$count Fichas de atendimento';
+      });
+    });
+  }
+
+  void quantidadeFichasAbertas(String userId) async {
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    await db
+        .collection('files')
+        .where('idUser', isEqualTo: userId)
+        .where('status', isEqualTo: 'Em aberto')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      int count = querySnapshot.size;
+
+      setState(() {
+        openFiles = '$count em aberto';
+      });
+    });
+  }
+
+  void quantidadeOrcamentos(String userId) async {
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    await db
+        .collection('budgets')
+        .where('idUser', isEqualTo: userId)
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      int count = querySnapshot.size;
+
+      setState(() {
+        totBudgets = '$count Orçamentos';
+      });
+    });
+  }
+
+  void quantidadeOrcamentosAndamento(String userId) async {
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    await db
+        .collection('budgets')
+        .where('idUser', isEqualTo: userId)
+        .where('status', isEqualTo: 'Em andamento')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      int count = querySnapshot.size;
+
+      setState(() {
+        openBudgets = '$count em andamento';
       });
     });
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    //titlePage = 'Não achei nada seu idiota';
-
     recuperarNomeEmpresa(userId.toString());
     quantidadeClientes(userId.toString());
+    quantidadeFichas(userId.toString());
+    quantidadeFichasAbertas(userId.toString());
+    quantidadeOrcamentos(userId.toString());
+    quantidadeOrcamentosAndamento(userId.toString());
   }
 
   @override
