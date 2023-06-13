@@ -56,3 +56,27 @@ Future<Color> retCorFicha(String status) {
 
   return completer.future;
 }
+
+Future<Color> retCorOrcamento(String status) {
+  Completer<Color> completer = Completer<Color>();
+
+  switch (status) {
+    case 'Em aprovação':
+      completer.complete(Colors.green);
+      break;
+    case 'Em andamento':
+      completer.complete(Colors.blue);
+      break;
+    case 'Finalizado':
+      completer.complete(Colors.black);
+      break;
+    case 'Cancelado':
+      completer.complete(Colors.red);
+      break;
+    default:
+      completer.complete(Colors.green);
+      break;
+  }
+
+  return completer.future;
+}

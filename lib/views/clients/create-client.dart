@@ -157,7 +157,7 @@ class _CreateClientState extends State<CreateClient> {
                       style: GoogleFonts.montserrat(
                           textStyle: TextStyle(
                               fontSize: 24,
-                              color: AppColors.titleColorBlack,
+                              color: AppColors.secondColor,
                               fontWeight: FontWeight.w600)),
                     )
                   ],

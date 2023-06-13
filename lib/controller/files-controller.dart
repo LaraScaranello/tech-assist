@@ -61,7 +61,7 @@ Future<int> getNextId() async {
   }
 }
 
-void updateClient(BuildContext context, String idFicha, Files file) async {
+void updateFile(BuildContext context, String idFicha, Files file) async {
   FirebaseFirestore db = FirebaseFirestore.instance;
 
   try {

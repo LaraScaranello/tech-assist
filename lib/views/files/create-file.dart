@@ -45,7 +45,6 @@ class _CreateFileState extends State<CreateFile> {
   String msgErro = '';
   String? fichaId = '';
   bool isButtonVisible = false;
-  bool? isCheckedStatusChamado = true;
   DateTime selectedDate = DateTime.now();
   int? idFicha;
   int? nextId;
@@ -80,7 +79,7 @@ class _CreateFileState extends State<CreateFile> {
     } else if (telefoneController.text.isEmpty) {
       msgErro = 'Preencha o campo telefone';
     } else if (dataController.text.isEmpty) {
-      msgErro = 'Selecione a data de abertura';
+      msgErro = 'Selecione a data de abertura da ficha';
     } else if (aparelhoController.text.isEmpty) {
       msgErro = 'Preencha o campo aparelho';
     } else if (defeitoController.text.isEmpty) {
@@ -110,12 +109,20 @@ class _CreateFileState extends State<CreateFile> {
           defeitoController.text);
 
       if (widget.ficha != null) {
-        updateClient(context, widget.ficha.toString(), file);
+        updateFile(context, widget.ficha.toString(), file);
         Navigator.pop(context);
       } else {
         newFile(context, file);
         Navigator.pop(context);
       }
+    } else {
+      final SnackBar snackBar = SnackBar(
+        content: Text(msgErro),
+        duration: Duration(seconds: 5),
+        backgroundColor: AppColors.textColorRed,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      msgErro = '';
     }
   }
 
@@ -192,7 +199,7 @@ class _CreateFileState extends State<CreateFile> {
                       style: GoogleFonts.montserrat(
                           textStyle: TextStyle(
                               fontSize: 24,
-                              color: AppColors.titleColorBlack,
+                              color: AppColors.secondColor,
                               fontWeight: FontWeight.w600)),
                     )
                   ],
@@ -586,8 +593,7 @@ class _CreateFileState extends State<CreateFile> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => CreateBudget(
-                                        ficha: fichaId,
-                                      )));
+                                      ficha: fichaId, orcamento: null)));
                         },
                       ),
                     ),

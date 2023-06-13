@@ -69,7 +69,7 @@ class _FilesPageState extends State<FilesPage> {
     setState(() {
       buscaCliente = '';
       searchController.clear();
-      hintTextStatus = 'Status';
+      dropValueStatus.value = dropOptionsStatus[0];
       dataInicioController.text =
           DateFormat('yyyy-MM-dd').format(DateTime.parse('2000-01-01'));
       dataFimController.text =
@@ -367,7 +367,17 @@ class _FilesPageState extends State<FilesPage> {
                         dataAbertura.isAtSameMomentAs(dataFimFiltro));
               }).toList();
             } else {
-              filteredDocuments = snapshot.data!.docs;
+              filteredDocuments = snapshot.data!.docs.where((doc) {
+                DateTime dataAbertura = doc['dataAbertura'].toDate();
+                DateTime dataInicioFiltro =
+                    DateTime.parse(dataInicioController.text);
+                DateTime dataFimFiltro = DateTime.parse(dataFimController.text);
+
+                return (dataAbertura.isAfter(dataInicioFiltro) ||
+                        dataAbertura.isAtSameMomentAs(dataInicioFiltro)) &&
+                    (dataAbertura.isBefore(dataFimFiltro) ||
+                        dataAbertura.isAtSameMomentAs(dataFimFiltro));
+              }).toList();
             }
           }
 
