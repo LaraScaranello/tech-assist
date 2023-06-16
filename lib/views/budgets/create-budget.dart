@@ -1,14 +1,22 @@
-// ignore_for_file: sized_box_for_whitespace, prefer_const_constructors, avoid_unnecessary_containers, prefer_interpolation_to_compose_strings, use_key_in_widget_constructors, must_be_immutable, unused_element, unused_local_variable, unused_local_variable, unnecessary_new, annotate_overrides
+// ignore_for_file: sized_box_for_whitespace, prefer_const_constructors, avoid_unnecessary_containers, prefer_interpolation_to_compose_strings, use_key_in_widget_constructors, must_be_immutable, unused_element, unused_local_variable, unused_local_variable, unnecessary_new, annotate_overrides, avoid_print, file_names, duplicate_ignore, depend_on_referenced_packages, unused_import, deprecated_member_use
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:pdf/pdf.dart';
 import 'package:tech_assist/controller/budget-controller.dart';
 import 'package:tech_assist/main.dart';
 import 'package:tech_assist/model/budgets.dart';
 import 'package:tech_assist/utils/appColors.dart';
+import 'dart:io';
+import 'package:flutter_full_pdf_viewer_null_safe/full_pdf_viewer_scaffold.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:share_extend/share_extend.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:tech_assist/views/viewpdf.dart';
 
 class CreateBudget extends StatefulWidget {
   String? ficha;
@@ -51,10 +59,324 @@ class _CreateBudgetState extends State<CreateBudget> {
   DateTime selectedDate = DateTime.now();
   int? idFicha;
   int? numFicha;
+  String? empresa;
 
   // máscaras
   final maskTelefone = MaskTextInputFormatter(
       mask: "(##)#####-####", filter: {"#": RegExp(r'[0-9]')});
+
+  void recuperaNomeEmpresa(String userId) async {
+    FirebaseFirestore db = FirebaseFirestore.instance;
+
+    QuerySnapshot querySnapshot = await db
+        .collection('users')
+        .where('idUser', isEqualTo: userId)
+        .limit(1)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      empresa = querySnapshot.docs[0].get('nomeEmpresa') as String;
+    }
+  }
+
+  Future<void> generatePDF(
+      BuildContext context, String empresa, Budgets budget) async {
+    final pdf = pw.Document();
+    final fontData = await rootBundle.load('fonts/Roboto.ttf');
+    final ttf = pw.Font.ttf(fontData);
+
+    /*final image = pw.MemoryImage(
+      File('assets/images/logo.png').readAsBytesSync(),
+    );*/
+
+    pdf.addPage(pw.MultiPage(
+        build: (context) => [
+              pw.Column(children: [
+                pw.SizedBox(height: 4),
+                /*pw.Container(
+                  child: pw.Image(image),
+                ),*/
+
+                //Nome da Empresa
+                pw.Center(
+                    child: pw.Text(
+                  empresa,
+                  style: pw.TextStyle(
+                    fontSize: 32,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                )),
+                pw.SizedBox(height: 28),
+
+                //Numero do Orçamento
+                pw.Align(
+                  alignment: pw.Alignment.topLeft,
+                  child: pw.Row(
+                    children: [
+                      pw.Text("Orçamento: ",
+                          style: pw.TextStyle(
+                            fontSize: 24,
+                            fontWeight: pw.FontWeight.bold,
+                          )),
+                      pw.SizedBox(width: 16),
+                      pw.Text(budget.numFicha.toString(),
+                          style: pw.TextStyle(
+                            fontSize: 20,
+                          )),
+                    ],
+                  ),
+                ),
+                pw.SizedBox(height: 16),
+
+                //Data do orçamento
+                pw.Align(
+                  alignment: pw.Alignment.topLeft,
+                  child: pw.Row(
+                    children: [
+                      pw.Text("Data Abertura: ",
+                          style: pw.TextStyle(
+                            fontSize: 24,
+                            fontWeight: pw.FontWeight.bold,
+                          )),
+                      pw.SizedBox(width: 16),
+                      pw.Text(
+                          DateFormat('dd/MM/yyyy').format(budget.dataAbertura),
+                          style: pw.TextStyle(
+                            fontSize: 20,
+                          )),
+                    ],
+                  ),
+                ),
+                pw.SizedBox(height: 16),
+
+                //Nome do Cliente
+                pw.Align(
+                  alignment: pw.Alignment.topLeft,
+                  child: pw.Row(
+                    children: [
+                      pw.Text("Cliente: ",
+                          style: pw.TextStyle(
+                            fontSize: 24,
+                            fontWeight: pw.FontWeight.bold,
+                          )),
+                      pw.SizedBox(width: 16),
+                      pw.Text(budget.cliente.toString(),
+                          style: pw.TextStyle(
+                            fontSize: 20,
+                          )),
+                    ],
+                  ),
+                ),
+                pw.SizedBox(height: 16),
+
+                //Email do Cliente
+                pw.Align(
+                  alignment: pw.Alignment.topLeft,
+                  child: pw.Row(
+                    children: [
+                      pw.Text("E-mail: ",
+                          style: pw.TextStyle(
+                            fontSize: 24,
+                            fontWeight: pw.FontWeight.bold,
+                          )),
+                      pw.SizedBox(width: 16),
+                      pw.Text(budget.email.toString(),
+                          style: pw.TextStyle(
+                            fontSize: 20,
+                          )),
+                    ],
+                  ),
+                ),
+                pw.SizedBox(height: 16),
+
+                //Telefone do Cliente
+                pw.Align(
+                  alignment: pw.Alignment.topLeft,
+                  child: pw.Row(
+                    children: [
+                      pw.Text("Telefone: ",
+                          style: pw.TextStyle(
+                            fontSize: 24,
+                            fontWeight: pw.FontWeight.bold,
+                          )),
+                      pw.SizedBox(width: 16),
+                      pw.Text(budget.telefone.toString(),
+                          style: pw.TextStyle(
+                            fontSize: 20,
+                          )),
+                    ],
+                  ),
+                ),
+                pw.SizedBox(height: 16),
+
+                //Aparelho
+                pw.Align(
+                  alignment: pw.Alignment.topLeft,
+                  child: pw.Row(
+                    children: [
+                      pw.Text("Aparelho: ",
+                          style: pw.TextStyle(
+                            fontSize: 24,
+                            fontWeight: pw.FontWeight.bold,
+                          )),
+                      pw.SizedBox(width: 16),
+                      pw.Text(budget.aparelho.toString(),
+                          style: pw.TextStyle(
+                            fontSize: 20,
+                          )),
+                    ],
+                  ),
+                ),
+                pw.SizedBox(height: 16),
+
+                //Defeito
+                pw.Align(
+                  alignment: pw.Alignment.topLeft,
+                  child: pw.Text("Defeito: ",
+                      style: pw.TextStyle(
+                        fontSize: 24,
+                        fontWeight: pw.FontWeight.bold,
+                      )),
+                ),
+                pw.SizedBox(height: 4),
+                pw.Align(
+                  alignment: pw.Alignment.topLeft,
+                  child: pw.Text(budget.defeito.toString(),
+                      style: pw.TextStyle(
+                        fontSize: 20,
+                      )),
+                ),
+                pw.SizedBox(height: 16),
+
+                //Diagnostico
+                pw.Align(
+                  alignment: pw.Alignment.topLeft,
+                  child: pw.Text("Diagnóstico: ",
+                      style: pw.TextStyle(
+                        fontSize: 24,
+                        fontWeight: pw.FontWeight.bold,
+                      )),
+                ),
+                pw.SizedBox(height: 4),
+                pw.Align(
+                  alignment: pw.Alignment.topLeft,
+                  child: pw.Text(budget.diagnostico.toString(),
+                      style: pw.TextStyle(
+                        fontSize: 20,
+                      )),
+                ),
+                pw.SizedBox(height: 16),
+
+                //Serviços realizados
+                pw.Align(
+                  alignment: pw.Alignment.topLeft,
+                  child: pw.Text("Serviços Realizados: ",
+                      style: pw.TextStyle(
+                        fontSize: 24,
+                        fontWeight: pw.FontWeight.bold,
+                      )),
+                ),
+                pw.SizedBox(height: 4),
+                pw.Align(
+                  alignment: pw.Alignment.topLeft,
+                  child: pw.Text(budget.servicos.toString(),
+                      style: pw.TextStyle(
+                        fontSize: 20,
+                      )),
+                ),
+                pw.SizedBox(height: 24),
+
+                //Valor das peças
+                pw.Align(
+                  alignment: pw.Alignment.topLeft,
+                  child: pw.Row(
+                    children: [
+                      pw.Text("Valor Peças: ",
+                          style: pw.TextStyle(
+                            fontSize: 24,
+                            fontWeight: pw.FontWeight.bold,
+                          )),
+                      pw.SizedBox(width: 16),
+                      pw.Text(budget.valorPecas.toString(),
+                          style: pw.TextStyle(fontSize: 32)),
+                    ],
+                  ),
+                ),
+                pw.SizedBox(height: 16),
+
+                //Valor mão de obra
+                pw.Align(
+                  alignment: pw.Alignment.topLeft,
+                  child: pw.Row(
+                    children: [
+                      pw.Text("Valor Mão de Obra: ",
+                          style: pw.TextStyle(
+                            fontSize: 24,
+                            fontWeight: pw.FontWeight.bold,
+                          )),
+                      pw.SizedBox(width: 16),
+                      pw.Text(budget.valorMaoDeObra.toString(),
+                          style: pw.TextStyle(
+                            fontSize: 32,
+                          )),
+                    ],
+                  ),
+                ),
+                pw.SizedBox(height: 16),
+                //Valor total
+                pw.Align(
+                  alignment: pw.Alignment.topLeft,
+                  child: pw.Row(
+                    children: [
+                      pw.Text("Valor Total: ",
+                          style: pw.TextStyle(
+                            fontSize: 24,
+                            fontWeight: pw.FontWeight.bold,
+                          )),
+                      pw.SizedBox(width: 16),
+                      pw.Text(budget.valorTotal.toString(),
+                          style: pw.TextStyle(
+                            fontSize: 32,
+                          )),
+                    ],
+                  ),
+                ),
+
+                pw.SizedBox(height: 16),
+                /*pw.Table.fromTextArray(data: <List<String>>[
+                  <String>[
+                    'Cliente',
+                    'Aparelho',
+                    'Defeito',
+                    'Serviço',
+                    'Valor Peças',
+                    'Valor Mão de Obra',
+                    'Valor Total'
+                  ],
+                  [
+                    nome,
+                    aparelho,
+                    defeito,
+                    servicos,
+                    valorPecas.toString(),
+                    valorMaoObra.toString(),
+                    valorTotal.toString()
+                  ],
+                ])*/
+              ])
+            ]));
+    final output = await getTemporaryDirectory();
+    final String path = '${output.path}/orcamento.pdf';
+    final file = File(path);
+    await file.writeAsBytes(await pdf.save());
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PDFViewerScreen(pdfPath: path),
+      ),
+    );
+  }
 
   void _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
@@ -196,12 +518,6 @@ class _CreateBudgetState extends State<CreateBudget> {
           double.parse(valorMaoObraController.text),
           double.parse(valorTotalController.text));
 
-      //logica
-      //se (ficha <> '') e (orcamento = '')
-      //  newBudget
-      //senao
-      //  updateBudget
-
       if ((widget.ficha != null) && (widget.orcamento == null)) {
         newBudget(context, budget);
         Navigator.of(context).pushNamed('/main-page');
@@ -210,20 +526,7 @@ class _CreateBudgetState extends State<CreateBudget> {
 
         Navigator.of(context).pushNamed('/main-page');
       }
-
-      /*
-      if ((widget.ficha != null) && (widget.ficha != null)) {
-        print('');
-        updateBudget(context, widget.ficha.toString(), budget);
-        Navigator.of(context).pushNamed('/budgets-page');
-      } else {
-        print('');
-        newBudget(context, budget);
-        Navigator.of(context).pushNamed('/budgets-page');
-      }
-      */
     } else {
-      print('3');
       final SnackBar snackBar = SnackBar(
         content: Text(msgErro),
         duration: Duration(seconds: 5),
@@ -238,11 +541,16 @@ class _CreateBudgetState extends State<CreateBudget> {
     super.initState();
 
     setState(() {
+      recuperaNomeEmpresa(userId.toString());
+
       if ((widget.ficha != null) && (widget.orcamento == null)) {
         carregaFicha();
         dropValueStatus.value = dropOptionsStatus[0];
       } else if ((widget.ficha == null) && (widget.orcamento != null)) {
         recuperarDados();
+        isButtonVisible = true;
+      } else {
+        isButtonVisible = false;
       }
       valorPecasController.addListener(() {
         atualizarValorTotal();
@@ -348,8 +656,8 @@ class _CreateBudgetState extends State<CreateBudget> {
                   child: Row(
                     children: [
                       Icon(
-                        size: 18,
                         Icons.person,
+                        size: 18,
                         color: AppColors.secondColor,
                       ),
                       Padding(
@@ -387,8 +695,8 @@ class _CreateBudgetState extends State<CreateBudget> {
                   child: Row(
                     children: [
                       Icon(
-                        size: 18,
                         Icons.email,
+                        size: 18,
                         color: AppColors.secondColor,
                       ),
                       Padding(
@@ -427,8 +735,8 @@ class _CreateBudgetState extends State<CreateBudget> {
                   child: Row(
                     children: [
                       Icon(
-                        size: 18,
                         Icons.phone,
+                        size: 18,
                         color: AppColors.secondColor,
                       ),
                       Padding(
@@ -468,8 +776,8 @@ class _CreateBudgetState extends State<CreateBudget> {
                   child: Row(
                     children: [
                       Icon(
-                        size: 18,
                         Icons.build,
+                        size: 18,
                         color: AppColors.secondColor,
                       ),
                       Padding(
@@ -507,8 +815,8 @@ class _CreateBudgetState extends State<CreateBudget> {
                   child: Row(
                     children: [
                       Icon(
-                        size: 18,
                         Icons.assignment_late,
+                        size: 18,
                         color: AppColors.secondColor,
                       ),
                       Padding(
@@ -546,8 +854,8 @@ class _CreateBudgetState extends State<CreateBudget> {
                   child: Row(
                     children: [
                       Icon(
-                        size: 18,
                         Icons.assignment_late,
+                        size: 18,
                         color: AppColors.secondColor,
                       ),
                       Padding(
@@ -585,8 +893,8 @@ class _CreateBudgetState extends State<CreateBudget> {
                   child: Row(
                     children: [
                       Icon(
-                        size: 18,
                         Icons.assignment,
+                        size: 18,
                         color: AppColors.secondColor,
                       ),
                       Padding(
@@ -624,8 +932,8 @@ class _CreateBudgetState extends State<CreateBudget> {
                   child: Row(
                     children: [
                       Icon(
-                        size: 18,
                         Icons.calendar_month,
+                        size: 18,
                         color: AppColors.secondColor,
                       ),
                       Padding(
@@ -664,8 +972,8 @@ class _CreateBudgetState extends State<CreateBudget> {
                   child: Row(
                     children: [
                       Icon(
-                        size: 18,
                         Icons.price_change,
+                        size: 18,
                         color: AppColors.secondColor,
                       ),
                       Padding(
@@ -704,8 +1012,8 @@ class _CreateBudgetState extends State<CreateBudget> {
                   child: Row(
                     children: [
                       Icon(
-                        size: 18,
                         Icons.price_change,
+                        size: 18,
                         color: AppColors.secondColor,
                       ),
                       Padding(
@@ -744,8 +1052,8 @@ class _CreateBudgetState extends State<CreateBudget> {
                   child: Row(
                     children: [
                       Icon(
-                        size: 18,
                         Icons.price_check,
+                        size: 18,
                         color: AppColors.secondColor,
                       ),
                       Padding(
@@ -778,6 +1086,62 @@ class _CreateBudgetState extends State<CreateBudget> {
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(4)),
                         contentPadding: EdgeInsets.all(5)),
+                  ),
+                ),
+                Visibility(
+                  visible: isButtonVisible,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 20),
+                    child: Container(
+                      width: double.infinity,
+                      height: 48,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(4)),
+                          border: Border.all(
+                              width: 1, color: AppColors.textColorBlue)),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white),
+                        child: Text(
+                          "Gerar PDF",
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.secondColor),
+                        ),
+                        onPressed: () {
+                          Budgets budget = new Budgets(
+                              userId,
+                              idFicha,
+                              dropValueStatus.value.toString(),
+                              nomeController.text,
+                              emailController.text,
+                              telefoneController.text,
+                              DateTime.parse(dataController.text),
+                              aparelhoController.text,
+                              defeitoController.text,
+                              diagnosticoController.text,
+                              servicosController.text,
+                              double.parse(valorPecasController.text),
+                              double.parse(valorMaoObraController.text),
+                              double.parse(valorTotalController.text));
+
+                          generatePDF(context, empresa.toString(), budget);
+                          /*
+                          _createPdf(
+                              context,
+                              empresa.toString(),
+                              idFicha!,
+                              nomeController.text,
+                              aparelhoController.text,
+                              defeitoController.text,
+                              servicosController.text,
+                              double.parse(valorPecasController.text),
+                              double.parse(valorMaoObraController.text),
+                              double.parse(valorTotalController.text));*/
+                        },
+                      ),
+                    ),
                   ),
                 ),
                 Row(

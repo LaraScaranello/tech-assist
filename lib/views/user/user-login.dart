@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, file_names, sized_box_for_whitespace, avoid_print, sort_child_properties_last, unused_local_variable, must_call_super, prefer_interpolation_to_compose_strings, use_key_in_widget_constructors, unnecessary_new
+// ignore_for_file: prefer_const_constructors, file_names, sized_box_for_whitespace, avoid_print, sort_child_properties_last, unused_local_variable, must_call_super, prefer_interpolation_to_compose_strings, use_key_in_widget_constructors, unnecessary_new, unused_import
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

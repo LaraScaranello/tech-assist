@@ -63,7 +63,7 @@ Future<void> confirmaExclusao(BuildContext context, String usuario) {
                           borderRadius: BorderRadius.all(Radius.circular(4))),
                       child: ElevatedButton(
                         onPressed: () {
-                          removerUsuario(context, usuario);
+                          deleteUser(context);
                         },
                         child: Text("Sim",
                             style: GoogleFonts.montserrat(

@@ -25,6 +25,7 @@ class _BudgetsPageState extends State<BudgetsPage> {
 
   final dropValueStatus = ValueNotifier('');
   final dropOptionsStatus = [
+    'Geral',
     'Em aprovação',
     'Em andamento',
     'Finalizado',
@@ -67,7 +68,7 @@ class _BudgetsPageState extends State<BudgetsPage> {
     setState(() {
       buscaCliente = '';
       searchController.clear();
-      hintTextStatus = 'Status';
+      dropValueStatus.value = dropOptionsStatus[0];
       dataInicioController.text =
           DateFormat('yyyy-MM-dd').format(DateTime.parse('2000-01-01'));
       dataFimController.text =
@@ -329,7 +330,6 @@ class _BudgetsPageState extends State<BudgetsPage> {
                 DateTime dataInicioFiltro =
                     DateTime.parse(dataInicioController.text);
                 DateTime dataFimFiltro = DateTime.parse(dataFimController.text);
-
                 return doc['cliente'] == buscaCliente &&
                     doc['status'] == dropValueStatus.value &&
                     (dataAbertura.isAfter(dataInicioFiltro) ||
@@ -343,7 +343,6 @@ class _BudgetsPageState extends State<BudgetsPage> {
                 DateTime dataInicioFiltro =
                     DateTime.parse(dataInicioController.text);
                 DateTime dataFimFiltro = DateTime.parse(dataFimController.text);
-
                 return doc['cliente'] == buscaCliente &&
                     (dataAbertura.isAfter(dataInicioFiltro) ||
                         dataAbertura.isAtSameMomentAs(dataInicioFiltro)) &&
@@ -357,7 +356,6 @@ class _BudgetsPageState extends State<BudgetsPage> {
                 DateTime dataInicioFiltro =
                     DateTime.parse(dataInicioController.text);
                 DateTime dataFimFiltro = DateTime.parse(dataFimController.text);
-
                 return doc['status'] == dropValueStatus.value &&
                     (dataAbertura.isAfter(dataInicioFiltro) ||
                         dataAbertura.isAtSameMomentAs(dataInicioFiltro)) &&
@@ -370,7 +368,6 @@ class _BudgetsPageState extends State<BudgetsPage> {
                 DateTime dataInicioFiltro =
                     DateTime.parse(dataInicioController.text);
                 DateTime dataFimFiltro = DateTime.parse(dataFimController.text);
-
                 return (dataAbertura.isAfter(dataInicioFiltro) ||
                         dataAbertura.isAtSameMomentAs(dataInicioFiltro)) &&
                     (dataAbertura.isBefore(dataFimFiltro) ||
