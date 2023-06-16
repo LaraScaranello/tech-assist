@@ -1,4 +1,4 @@
-// ignore_for_file: sized_box_for_whitespace, prefer_const_constructors, avoid_unnecessary_containers, prefer_interpolation_to_compose_strings, use_key_in_widget_constructors, avoid_function_literals_in_foreach_calls, unused_element, unused_local_variable, unnecessary_new, use_build_context_synchronously, annotate_overrides
+// ignore_for_file: sized_box_for_whitespace, prefer_const_constructors, avoid_unnecessary_containers, prefer_interpolation_to_compose_strings, use_key_in_widget_constructors, avoid_function_literals_in_foreach_calls, unused_element, unused_local_variable, unnecessary_new, use_build_context_synchronously, annotate_overrides, unnecessary_null_comparison
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -279,8 +279,8 @@ class _CreateFileState extends State<CreateFile> {
                   child: Row(
                     children: [
                       Icon(
-                        size: 18,
                         Icons.person,
+                        size: 18,
                         color: AppColors.secondColor,
                       ),
                       Padding(
@@ -363,8 +363,8 @@ class _CreateFileState extends State<CreateFile> {
                   child: Row(
                     children: [
                       Icon(
-                        size: 18,
                         Icons.email,
+                        size: 18,
                         color: AppColors.secondColor,
                       ),
                       Padding(
@@ -405,8 +405,8 @@ class _CreateFileState extends State<CreateFile> {
                   child: Row(
                     children: [
                       Icon(
-                        size: 18,
                         Icons.phone,
+                        size: 18,
                         color: AppColors.secondColor,
                       ),
                       Padding(
@@ -448,8 +448,8 @@ class _CreateFileState extends State<CreateFile> {
                   child: Row(
                     children: [
                       Icon(
-                        size: 18,
                         Icons.calendar_month,
+                        size: 18,
                         color: AppColors.secondColor,
                       ),
                       Padding(
@@ -490,8 +490,8 @@ class _CreateFileState extends State<CreateFile> {
                   child: Row(
                     children: [
                       Icon(
-                        size: 18,
                         Icons.build,
+                        size: 18,
                         color: AppColors.secondColor,
                       ),
                       Padding(
@@ -531,8 +531,8 @@ class _CreateFileState extends State<CreateFile> {
                   child: Row(
                     children: [
                       Icon(
-                        size: 18,
                         Icons.assignment_late,
+                        size: 18,
                         color: AppColors.secondColor,
                       ),
                       Padding(

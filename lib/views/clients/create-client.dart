@@ -56,17 +56,17 @@ class _CreateClientState extends State<CreateClient> {
 
       bool cpfCadastrado = await verificaDocumento(client.documento);
 
-      if (cpfCadastrado) {
-        final snackBar = SnackBar(
-          content: Text("O CPF informado já está cadastrado"),
-          duration: Duration(seconds: 5),
-          backgroundColor: AppColors.textColorRed,
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      if (widget.cliente != null) {
+        updateClient(context, widget.cliente.toString(), client);
+        Navigator.pop(context);
       } else {
-        if (widget.cliente != null) {
-          updateClient(context, widget.cliente.toString(), client);
-          Navigator.pop(context);
+        if (cpfCadastrado) {
+          final snackBar = SnackBar(
+            content: Text("O CPF informado já está cadastrado"),
+            duration: Duration(seconds: 5),
+            backgroundColor: AppColors.textColorRed,
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
         } else {
           newClient(context, client);
           Navigator.pop(context);
@@ -168,8 +168,8 @@ class _CreateClientState extends State<CreateClient> {
                   child: Row(
                     children: [
                       Icon(
-                        size: 18,
                         Icons.person,
+                        size: 18,
                         color: AppColors.secondColor,
                       ),
                       Padding(
@@ -209,8 +209,8 @@ class _CreateClientState extends State<CreateClient> {
                   child: Row(
                     children: [
                       Icon(
-                        size: 18,
                         Icons.person_pin_rounded,
+                        size: 18,
                         color: AppColors.secondColor,
                       ),
                       Padding(
@@ -252,8 +252,8 @@ class _CreateClientState extends State<CreateClient> {
                   child: Row(
                     children: [
                       Icon(
-                        size: 18,
                         Icons.email,
+                        size: 18,
                         color: AppColors.secondColor,
                       ),
                       Padding(
@@ -294,8 +294,8 @@ class _CreateClientState extends State<CreateClient> {
                   child: Row(
                     children: [
                       Icon(
-                        size: 18,
                         Icons.phone,
+                        size: 18,
                         color: AppColors.secondColor,
                       ),
                       Padding(

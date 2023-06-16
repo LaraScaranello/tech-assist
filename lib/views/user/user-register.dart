@@ -13,6 +13,89 @@ class RegisterUserPage extends StatefulWidget {
   State<RegisterUserPage> createState() => _RegisterUserPageState();
 }
 
+Future<void> termosDeUso(BuildContext context) {
+  return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Termos de Uso e Condições",
+              style: GoogleFonts.montserrat(
+                textStyle: TextStyle(
+                    fontSize: 20,
+                    color: AppColors.titleColorBlack,
+                    fontWeight: FontWeight.w600),
+              ),
+              textAlign: TextAlign.center),
+          content: SingleChildScrollView(
+            child: Column(children: [
+              Text(
+                "Bem-vindo à Tech Assist! Este documento estabelece os termos e condições para o uso dos serviços de manutenção em informática oferecidos por nossa empresa fictícia. Ao utilizar nossos serviços, você concorda em cumprir as disposições estabelecidas neste Termo de Uso. Recomendamos que leia atentamente todas as informações apresentadas abaixo.",
+                textAlign: TextAlign.justify,
+                style: GoogleFonts.montserrat(
+                  textStyle:
+                      TextStyle(fontSize: 16, color: AppColors.textColorBlack),
+                ),
+              ),
+              Text(
+                "1. Aceitação dos Termos de Uso. Ao acessar ou utilizar os serviços da Tech Assist, você reconhece e concorda que leu, compreendeu e aceitou os termos e condições aqui estabelecidos. Caso não concorde com esses termos, solicitamos que não utilize nossos serviços.",
+                textAlign: TextAlign.justify,
+                style: GoogleFonts.montserrat(
+                  textStyle:
+                      TextStyle(fontSize: 16, color: AppColors.textColorBlack),
+                ),
+              ),
+              Text(
+                "2. Descrição dos Serviços. A Tech Assist oferece serviços de manutenção em informática, incluindo diagnóstico, reparo, atualização e suporte técnico para computadores, laptops, dispositivos móveis e outros equipamentos relacionados.",
+                textAlign: TextAlign.justify,
+                style: GoogleFonts.montserrat(
+                  textStyle:
+                      TextStyle(fontSize: 16, color: AppColors.textColorBlack),
+                ),
+              ),
+              Text(
+                "3. Responsabilidades do Cliente. Ao solicitar nossos serviços, você declara que é o proprietário legal dos equipamentos para os quais está buscando assistência ou que possui a devida autorização do proprietário para solicitar os serviços em seu nome. Você é responsável por fornecer informações precisas e completas sobre os problemas enfrentados, bem como sobre quaisquer modificações realizadas anteriormente nos equipamentos.",
+                textAlign: TextAlign.justify,
+                style: GoogleFonts.montserrat(
+                  textStyle:
+                      TextStyle(fontSize: 16, color: AppColors.textColorBlack),
+                ),
+              ),
+              Text(
+                "4. Lei Aplicável e Jurisdição. Estes Termos de Uso são regidos pelas leis do país fictício em que a Tech Assist está sediada. Quaisquer disputas decorrent",
+                textAlign: TextAlign.justify,
+                style: GoogleFonts.montserrat(
+                  textStyle:
+                      TextStyle(fontSize: 16, color: AppColors.textColorBlack),
+                ),
+              ),
+              SizedBox(height: 8),
+              Container(
+                height: 36,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(4)),
+                    border:
+                        Border.all(width: 1, color: AppColors.textColorBlue)),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text("Voltar",
+                      style: GoogleFonts.montserrat(
+                        textStyle: TextStyle(
+                            fontSize: 16,
+                            color: AppColors.textColorBlue,
+                            fontWeight: FontWeight.w500),
+                      )),
+                  style:
+                      ElevatedButton.styleFrom(backgroundColor: Colors.white),
+                ),
+              ),
+            ]),
+          ),
+        );
+      });
+}
+
 bool _passwordVisible = true;
 bool _passwordConfirmVisible = true;
 
@@ -399,11 +482,16 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
                             termos = valor!;
                           });
                         }),
-                    Text(
-                      "Concordo com os termos e condições",
-                      style: GoogleFonts.montserrat(
-                        textStyle: TextStyle(
-                            fontSize: 14, color: AppColors.textColorBlack),
+                    GestureDetector(
+                      onTap: () {
+                        termosDeUso(context);
+                      },
+                      child: Text(
+                        "Concordo com os termos e condições",
+                        style: GoogleFonts.montserrat(
+                          textStyle: TextStyle(
+                              fontSize: 14, color: AppColors.textColorBlack),
+                        ),
                       ),
                     )
                   ],
